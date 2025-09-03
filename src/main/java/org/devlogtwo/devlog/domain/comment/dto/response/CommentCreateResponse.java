@@ -9,7 +9,7 @@ public record CommentCreateResponse(
         String content,
         Long taskId,
         Long userId,
-        CommentUserResponse User,
+        CommentUserResponse user,
         Long parentId,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
