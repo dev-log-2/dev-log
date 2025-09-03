@@ -53,12 +53,16 @@ public class TaskService implements TaskServiceApi {
     @Transactional(readOnly = true)
     public TaskPageResponse getTaskList(TaskStatus status, Pageable pageable) {
 
-        Page<Task> taskPage = taskRepository.findByStatus(status, pageable);
+        Page<Task> taskPage;
+
+        if (status == null) {
+            taskPage = taskRepository.findAll(pageable);
+        } else {
+            taskPage = taskRepository.findByStatus(status, pageable);
+        }
 
         Page<TaskResponse> responsePage = taskPage.map(TaskResponse::from);
 
         return TaskPageResponse.from(responsePage);
-
-
     }
 }
