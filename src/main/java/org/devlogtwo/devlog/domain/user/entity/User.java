@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devlogtwo.devlog.common.entity.BaseTimeEntity;
@@ -40,4 +41,22 @@ public class User extends BaseTimeEntity {
     private UserRole role;
 
     private LocalDateTime deletedAt;
+
+    @Builder(access = AccessLevel.PRIVATE)
+    private User(String username, String name, String email, String password, UserRole role) {
+        this.username = username;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    public static User signUp(String username, String name, String email, String password, UserRole role) {
+        return User.builder().username(username)
+                .name(name)
+                .email(email)
+                .password(password)
+                .role(role)
+                .build();
+    }
 }
