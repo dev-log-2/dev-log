@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devlogtwo.devlog.common.entity.BaseTimeEntity;
@@ -25,10 +26,14 @@ public class Team extends BaseTimeEntity {
     @Column(nullable = false)
     private String description;
 
+    @Builder
+    private Team(Long id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
+
     public static Team of(String name, String description) {
-        Team team = new Team();
-        team.name = name;
-        team.description = description;
-        return team;
+        return Team.builder().name(name).description(description).build();
     }
 }
