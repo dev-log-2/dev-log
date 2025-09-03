@@ -8,12 +8,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devlogtwo.devlog.common.type.TeamRole;
 import org.devlogtwo.devlog.domain.user.entity.User;
+import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Getter
@@ -35,15 +39,19 @@ public class TeamMember {
     @Column(nullable = false)
     private TeamRole teamRole;
 
+    @CreatedDate
+    @Column(updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime createdAt; //팀에 가입한 시간
+
     @Builder
-    private TeamMember(Long id, User user, Team team, TeamRole teamRole) {
-        this.id = id;
+    private TeamMember(User user, Team team, TeamRole teamRole) {
         this.user = user;
         this.team = team;
         this.teamRole = teamRole;
     }
 
-    public static TeamMember of(Long id, User user, Team team, TeamRole teamRole) {
-        return TeamMember.builder().id(id).user(user).team(team).teamRole(teamRole).build();
+    public static TeamMember addMember(User user, Team team, TeamRole teamRole) {
+        return TeamMember.builder().user(user).team(team).teamRole(teamRole).build();
     }
 }
