@@ -61,7 +61,8 @@ public class Task extends BaseTimeEntity {
     }
 
     // 정적 팩토리 메소드
-    public static Task create(String title, String description, TaskPriority priority, User assignee, LocalDateTime dueDate) {
+    public static Task create(String title, String description, TaskPriority priority, User assignee,
+                              LocalDateTime dueDate) {
         return Task.builder()
                 .title(title)
                 .description(description)

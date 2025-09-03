@@ -25,7 +25,8 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping
-    public ResponseEntity<GlobalApiResponse<TaskCreateResponse>> createTask(@Valid @RequestBody TaskCreateRequest request) {
+    public ResponseEntity<GlobalApiResponse<TaskCreateResponse>> createTask(
+            @Valid @RequestBody TaskCreateRequest request) {
 
         TaskCreateResponse response = taskService.createTask(request);
 
