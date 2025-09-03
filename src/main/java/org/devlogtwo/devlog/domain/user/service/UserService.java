@@ -20,4 +20,11 @@ public class UserService implements UserServiceApi {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomBusinessException(ErrorCode.USER_NOT_FOUND));
     }
+
+
+    @Override
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomBusinessException(ErrorCode.USER_NOT_FOUND));
+    }
 }

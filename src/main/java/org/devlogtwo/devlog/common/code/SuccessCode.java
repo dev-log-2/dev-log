@@ -18,14 +18,14 @@ public enum SuccessCode {
 
     // --- Task Success ---
     TASK_CREATED(HttpStatus.CREATED, "Task가 생성되었습니다."),
-
+    GET_TASK_SUCCESS(HttpStatus.OK, "Task를 조회했습니다."),
+    GET_TASKS_SUCCESS(HttpStatus.OK, "Task 목록을 조회했습니다."),
 
     //--- comment Success ---
     COMMENT_CREATED(HttpStatus.CREATED, "Comment가 생성되었습니다."),
 
     // --- Team Success ---
     TEAM_CREATE_SUCCESS(HttpStatus.CREATED, "팀이 성공적으로 생성되었습니다.");
-
 
     private final HttpStatus httpStatus;
     private final String message;
