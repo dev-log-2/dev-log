@@ -13,10 +13,10 @@ public record TaskCreateRequest(
 
         LocalDateTime dueDate,
 
-        @NotBlank(message = "우선순위는 필수입니다.")
+        @NotNull(message = "우선순위는 필수입니다.")
         TaskPriority priority,
 
-        @NotBlank(message = "담당자는 필수입니다.")
+        @NotNull(message = "담당자는 필수입니다.")
         Long assigneeId
 ) {
 }
