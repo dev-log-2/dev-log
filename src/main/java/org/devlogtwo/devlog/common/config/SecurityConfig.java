@@ -30,11 +30,12 @@ public class SecurityConfig {
 
         // API 엔드포인트별 접근 권한 설정
         http.authorizeHttpRequests((authorizeHttpRequests) ->
-                authorizeHttpRequests
-                        // '/api/auth/'로 시작하는 모든 요청은 인증 없이 허용
-                        .requestMatchers("/api/auth/**").permitAll()
-                        // 그 외 모든 요청은 인증이 필요함
-                        .anyRequest().authenticated()
+                        authorizeHttpRequests
+                                .requestMatchers("/**").permitAll()
+//                        // '/api/auth/'로 시작하는 모든 요청은 인증 없이 허용
+//                        .requestMatchers("/api/auth/**").permitAll()
+//                        // 그 외 모든 요청은 인증이 필요함
+//                        .anyRequest().authenticated()
         );
 
         // TODO: JWT 인증 필터 추가
