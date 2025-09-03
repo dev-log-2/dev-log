@@ -1,20 +1,25 @@
 package org.devlogtwo.devlog.domain.task.controller;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.code.SuccessCode;
 import org.devlogtwo.devlog.common.dto.GlobalApiResponse;
+import org.devlogtwo.devlog.common.type.TaskStatus;
 import org.devlogtwo.devlog.common.util.ResponseHelper;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskCreateRequest;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskCreateResponse;
+import org.devlogtwo.devlog.domain.task.dto.response.TaskPageResponse;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskResponse;
 import org.devlogtwo.devlog.domain.task.service.TaskService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -39,5 +44,12 @@ public class TaskController {
         TaskResponse response = taskService.getTask(taskId);
 
         return ResponseHelper.success(SuccessCode.GET_TASK_SUCCESS, response);
+    }
+
+    @GetMapping
+    public ResponseEntity<GlobalApiResponse<TaskPageResponse>> getTaskList(@RequestParam(required = false) TaskStatus status, Pageable pageable) {
+
+        TaskPageResponse response = taskService.getTaskList(status, pageable);
+        return ResponseHelper.success(SuccessCode.GET_TASKS_SUCCESS, response);
     }
 }
