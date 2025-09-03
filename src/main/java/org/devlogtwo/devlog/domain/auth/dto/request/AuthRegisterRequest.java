@@ -13,7 +13,7 @@ public record AuthRegisterRequest(
         @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "아이디는 영문과 숫자만 사용할 수 있습니다.")
         String username,
 
-        @NotBlank(message = "이메은 필수 입력값입니다.")
+        @NotBlank(message = "이메일은 필수 입력값입니다.")
         @Email
         String email,
 
