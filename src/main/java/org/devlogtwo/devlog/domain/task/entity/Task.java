@@ -15,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devlogtwo.devlog.common.entity.BaseTimeEntity;
+import org.devlogtwo.devlog.common.type.TaskPriority;
 import org.devlogtwo.devlog.common.type.TaskStatus;
 import org.devlogtwo.devlog.domain.user.entity.User;
 
@@ -38,7 +39,7 @@ public class Task extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String priority;
+    private TaskPriority priority;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignee_id")
