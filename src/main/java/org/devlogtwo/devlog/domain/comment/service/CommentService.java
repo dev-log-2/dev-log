@@ -1,7 +1,6 @@
 package org.devlogtwo.devlog.domain.comment.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.domain.comment.dto.request.CommentCreateRequest;
 import org.devlogtwo.devlog.domain.comment.dto.response.CommentCreateResponse;
