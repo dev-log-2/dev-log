@@ -8,9 +8,8 @@ import org.devlogtwo.devlog.domain.comment.dto.response.CommentCreateResponse;
 import org.devlogtwo.devlog.domain.comment.entity.Comment;
 import org.devlogtwo.devlog.domain.comment.repository.CommentRepository;
 import org.devlogtwo.devlog.domain.task.entity.Task;
-import org.devlogtwo.devlog.domain.task.repository.TaskRepository;
+import org.devlogtwo.devlog.domain.task.service.TaskServiceApi;
 import org.devlogtwo.devlog.domain.user.entity.User;
-import org.devlogtwo.devlog.domain.user.repository.UserRepository;
 import org.devlogtwo.devlog.domain.user.service.UserServiceApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,19 +20,14 @@ public class CommentService implements CommentServiceApi {
 
     private final CommentRepository commentRepository;
     private final UserServiceApi userService;
-    private final TaskRepository taskRepository;
+    private final TaskServiceApi  taskService;
 
     @Transactional
-    public CommentCreateResponse createComment(CommentCreateRequest request) {
-
-        Long tempUserId = 1L;
-        Long tempTaskId = 1L;
-
+    public CommentCreateResponse createComment(CommentCreateRequest request,Long taskId) {
+        Long tempUserId =1L;
 
         User user = userService.findUserById(tempUserId);
-
-        Task task = taskRepository.findById(tempTaskId)
-                .orElseThrow(() -> new EntityNotFoundException("테스트로 작성된 작업을 찾을수없습니다."));
+        Task task = taskService.findTaskById(taskId);
 
         Comment parent = null;
         if (request.getParentId() != null) {
