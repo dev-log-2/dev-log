@@ -65,4 +65,11 @@ public class TaskService implements TaskServiceApi {
 
         return TaskPageResponse.from(responsePage);
     }
+
+    @Override
+    public Task findTaskById(Long taskId) {
+
+        return taskRepository.findById(taskId)
+                .orElseThrow(() -> new CustomBusinessException(ErrorCode.TASK_NOT_FOUND));
+    }
 }
