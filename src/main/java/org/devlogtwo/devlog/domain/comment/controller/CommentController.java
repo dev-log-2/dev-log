@@ -23,14 +23,14 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    // 테스트를 위한 임시 엔드포인트
+
     @PostMapping("/{taskId}/comment")
     public ResponseEntity<GlobalApiResponse<CommentCreateResponse>> createCommentForTest(
             @PathVariable Long taskId,
             @Valid @RequestBody CommentCreateRequest request
     ) {
-        // 서비스의 새로운 테스트용 메서드를 호출
-        CommentCreateResponse response = commentService.createComment(request,taskId);
+
+        CommentCreateResponse response = commentService.createComment(request, taskId);
 
         return ResponseHelper.success(SuccessCode.COMMENT_CREATED, response);
     }
