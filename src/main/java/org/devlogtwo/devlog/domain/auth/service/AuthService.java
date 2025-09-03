@@ -1,6 +1,5 @@
 package org.devlogtwo.devlog.domain.auth.service;
 
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.config.JwtUtil;
@@ -57,8 +56,7 @@ public class AuthService {
     public AuthLoginResponse login(AuthLoginRequest authLoginRequest) {
 
         // username에 의한 user 존재 여부 검증
-        User user = Optional.ofNullable(userService.findUserByUsername(authLoginRequest.username()))
-                .orElseThrow(() -> new CustomBusinessException(ErrorCode.USER_NOT_FOUND));
+        User user = userService.findUserByUsername(authLoginRequest.username());
 
         // password 일치 여부 검증
         if (!passwordEncoder.matches(authLoginRequest.password(), user.getPassword())) {
