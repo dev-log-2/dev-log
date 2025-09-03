@@ -26,4 +26,9 @@ public record GlobalApiResponse<T>(
     public static GlobalApiResponse<Void> error(ErrorCode code) {
         return new GlobalApiResponse<>(false, code.getMessage(), null, LocalDateTime.now());
     }
+
+    // 실패 응답 생성 (MethodArgumentNotValidException용)
+    public static GlobalApiResponse<Void> error(ErrorCode code, String customMessage) {
+        return new GlobalApiResponse<>(false, code.getMessage(customMessage), null, LocalDateTime.now());
+    }
 }
