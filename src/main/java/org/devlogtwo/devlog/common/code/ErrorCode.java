@@ -10,6 +10,7 @@ public enum ErrorCode {
 
     // --- Common Errors ---
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "처리 중 오류가 발생했습니다."),
+    METHOD_ARGUMENT_NOT_VALID(HttpStatus.BAD_REQUEST, "입력이 잘못되었습니다. %s"),
 
     // --- User & Auth Errors ---
     DUPLICATE_USERNAME(HttpStatus.BAD_REQUEST, "이미 존재하는 사용자명입니다."),
@@ -20,6 +21,10 @@ public enum ErrorCode {
 
     private final HttpStatus httpStatus;
     private final String message;
+
+    public String getMessage(String... args) {
+        return String.format(this.message, (Object[]) args);
+    }
 }
 
 
