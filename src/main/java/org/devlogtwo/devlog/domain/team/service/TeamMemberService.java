@@ -13,11 +13,12 @@ import org.springframework.stereotype.Service;
 public class TeamMemberService implements TeamMemberServiceApi {
     private final TeamMemberRepository teamMemberRepository;
 
-    public List<TeamMemberResponse> findTeamMembers(Team team) {
 
-        List<TeamMember> members = teamMemberRepository.findByTeamId(team.getId());
-        //members.stream().map(TeamMemberResponse::from)
+    @Override
+    public List<TeamMemberResponse> findTeamMembers(Long teamId) {
 
-        return null;
+        List<TeamMember> members = teamMemberRepository.findByTeamId(teamId);
+
+        return members.stream().map(TeamMemberResponse::from).toList();
     }
 }
