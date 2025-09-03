@@ -4,7 +4,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.domain.comment.dto.request.CommentCreateRequest;
 import org.devlogtwo.devlog.domain.comment.dto.response.CommentCreateResponse;
-
 import org.devlogtwo.devlog.domain.comment.entity.Comment;
 import org.devlogtwo.devlog.domain.comment.repository.CommentRepository;
 import org.devlogtwo.devlog.domain.task.entity.Task;
@@ -20,11 +19,12 @@ public class CommentService implements CommentServiceApi {
 
     private final CommentRepository commentRepository;
     private final UserServiceApi userService;
-    private final TaskServiceApi  taskService;
+    private final TaskServiceApi taskService;
 
     @Transactional
-    public CommentCreateResponse createComment(CommentCreateRequest request,Long taskId) {
-        Long tempUserId =1L;
+    public CommentCreateResponse createComment(CommentCreateRequest request, Long taskId) {
+        //t 유저 받아오면 봐꿔야됨
+        Long tempUserId = 1L;
 
         User user = userService.findUserById(tempUserId);
         Task task = taskService.findTaskById(taskId);
@@ -45,8 +45,6 @@ public class CommentService implements CommentServiceApi {
 
         return CommentCreateResponse.from(savedComment);
     }
-
-
 
 
 }
