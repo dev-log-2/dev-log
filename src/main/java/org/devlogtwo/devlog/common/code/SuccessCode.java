@@ -25,7 +25,8 @@ public enum SuccessCode {
     COMMENT_CREATED(HttpStatus.CREATED, "Comment가 생성되었습니다."),
 
     // --- Team Success ---
-    TEAM_CREATE_SUCCESS(HttpStatus.CREATED, "팀이 성공적으로 생성되었습니다.");
+    TEAM_CREATE_SUCCESS(HttpStatus.CREATED, "팀이 성공적으로 생성되었습니다."),
+    TEAM_MEMBER_JOIN_SUCCESS(HttpStatus.CREATED, "멤버가 성공적으로 추가되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
