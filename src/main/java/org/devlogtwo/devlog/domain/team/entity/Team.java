@@ -27,13 +27,12 @@ public class Team extends BaseTimeEntity {
     private String description;
 
     @Builder
-    private Team(Long id, String name, String description) {
-        this.id = id;
+    private Team(String name, String description) {
         this.name = name;
         this.description = description;
     }
 
-    public static Team of(String name, String description) {
+    public static Team createTeam(String name, String description) {
         return Team.builder().name(name).description(description).build();
     }
 }
