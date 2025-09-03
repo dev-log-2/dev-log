@@ -24,4 +24,10 @@ public class ResponseHelper {
                 .status(code.getHttpStatus())
                 .body(GlobalApiResponse.error(code));
     }
+
+    public static ResponseEntity<GlobalApiResponse<Void>> error(ErrorCode code, String customMessage) {
+        return ResponseEntity
+                .status(code.getHttpStatus())
+                .body(GlobalApiResponse.error(code, customMessage));
+    }
 }
