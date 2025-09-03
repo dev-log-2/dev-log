@@ -17,7 +17,10 @@ public enum SuccessCode {
     WITHDRAWAL_SUCCESS(HttpStatus.OK, "회원탈퇴가 완료되었습니다."),
 
     // --- Task Success ---
-    TASK_CREATED(HttpStatus.CREATED, "Task가 생성되었습니다.");
+    TASK_CREATED(HttpStatus.CREATED, "Task가 생성되었습니다."),
+
+    //--- comment Success ---
+    COMMENT_CREATED(HttpStatus.CREATED, "Comment가 생성되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devlogtwo.devlog.common.entity.BaseTimeEntity;
@@ -38,7 +40,20 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "parentId")
     private Comment parent;
 
-//    @OneToMany(mappedBy = "parent",cascade = CascadeType.ALL,orphanRemoval = true)
-//    private List<Comment> children = new ArrayList<>(); 그렇게하면 대댓글이ㅏ 100개면 딜리트 쿼리가 100개가 나간다
-
+    @Builder
+    public Comment(User user, Task task, String content, Comment parent) {
+        this.user = user;
+        this.task = task;
+        this.content = content;
+        this.parent = parent;
+    }
+    //정적 팩토리 매소드
+    public static Comment create(User user, Task task, String content, Comment parent) {
+        return Comment.builder()
+                .user(user)
+                .task(task)
+                .content(content)
+                .parent(parent)
+                .build();
+    }
 }
