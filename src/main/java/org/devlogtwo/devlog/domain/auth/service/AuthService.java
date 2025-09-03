@@ -1,0 +1,49 @@
+package org.devlogtwo.devlog.domain.auth.service;
+
+import lombok.RequiredArgsConstructor;
+import org.devlogtwo.devlog.common.code.ErrorCode;
+import org.devlogtwo.devlog.common.exception.CustomBusinessException;
+import org.devlogtwo.devlog.common.type.UserRole;
+import org.devlogtwo.devlog.domain.auth.dto.request.AuthRegisterRequest;
+import org.devlogtwo.devlog.domain.auth.dto.response.AuthRegisterResponse;
+import org.devlogtwo.devlog.domain.user.entity.User;
+import org.devlogtwo.devlog.domain.user.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class AuthService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public AuthRegisterResponse signUp(AuthRegisterRequest authRegisterRequest) {
+
+        // username 중복 검증
+        if (userRepository.existsByUsername(authRegisterRequest.username())) {
+            throw new CustomBusinessException(ErrorCode.DUPLICATE_USERNAME);
+        }
+
+        // email 중복 검증
+        if (userRepository.existsByEmail(authRegisterRequest.email())) {
+            throw new CustomBusinessException(ErrorCode.DUPLICATE_EMAIL);
+        }
+
+        // 비밀번호, 비밀번호 확인 일치 여부 검증
+        String password = authRegisterRequest.password();
+        String passwordConfirm = authRegisterRequest.passwordConfirm();
+
+        if (!password.equals(passwordConfirm)) {
+            throw new CustomBusinessException(ErrorCode.PASSWORD_CONFIRM_MISMATCH);
+        }
+
+        String encodedPassword = passwordEncoder.encode(password);
+        User newUser = User.signUp(authRegisterRequest.username(), authRegisterRequest.name(),
+                authRegisterRequest.email(), encodedPassword, UserRole.USER);
+
+        User savedUser = userRepository.save(newUser);
+
+        return AuthRegisterResponse.from(savedUser);
+    }
+}
