@@ -47,7 +47,7 @@ public class Comment extends BaseTimeEntity {
         this.content = content;
         this.parent = parent;
     }
-    //정적 팩토리 매소드
+    //정적 팩토리 메소드
     public static Comment create(User user, Task task, String content, Comment parent) {
         return Comment.builder()
                 .user(user)
