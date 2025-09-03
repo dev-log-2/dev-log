@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devlogtwo.devlog.common.entity.BaseTimeEntity;
 import org.devlogtwo.devlog.common.type.TaskStatus;
+import org.devlogtwo.devlog.domain.user.entity.User;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
