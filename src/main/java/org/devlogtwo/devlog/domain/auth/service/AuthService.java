@@ -2,12 +2,16 @@ package org.devlogtwo.devlog.domain.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.code.ErrorCode;
+import org.devlogtwo.devlog.common.config.JwtUtil;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
 import org.devlogtwo.devlog.common.type.UserRole;
+import org.devlogtwo.devlog.domain.auth.dto.request.AuthLoginRequest;
 import org.devlogtwo.devlog.domain.auth.dto.request.AuthRegisterRequest;
+import org.devlogtwo.devlog.domain.auth.dto.response.AuthLoginResponse;
 import org.devlogtwo.devlog.domain.auth.dto.response.AuthRegisterResponse;
 import org.devlogtwo.devlog.domain.user.entity.User;
 import org.devlogtwo.devlog.domain.user.repository.UserRepository;
+import org.devlogtwo.devlog.domain.user.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +19,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private final UserService userService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     public AuthRegisterResponse signUp(AuthRegisterRequest authRegisterRequest) {
 
@@ -45,5 +51,20 @@ public class AuthService {
         User savedUser = userRepository.save(newUser);
 
         return AuthRegisterResponse.from(savedUser);
+    }
+
+    public AuthLoginResponse login(AuthLoginRequest authLoginRequest) {
+
+        // username에 의한 user 존재 여부 검증
+        User user = userService.findUserByUsername(authLoginRequest.username());
+
+        // password 일치 여부 검증
+        if (!passwordEncoder.matches(authLoginRequest.password(), user.getPassword())) {
+            throw new CustomBusinessException(ErrorCode.INVALID_CREDENTIALS);
+        }
+
+        // token 생성
+        String token = jwtUtil.createToken(user.getId(), user);
+        return AuthLoginResponse.from(token);
     }
 }
