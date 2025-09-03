@@ -11,6 +11,7 @@ import org.devlogtwo.devlog.domain.task.entity.Task;
 import org.devlogtwo.devlog.domain.task.repository.TaskRepository;
 import org.devlogtwo.devlog.domain.user.entity.User;
 import org.devlogtwo.devlog.domain.user.repository.UserRepository;
+import org.devlogtwo.devlog.domain.user.service.UserServiceApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService implements CommentServiceApi {
 
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
+    private final UserServiceApi userService;
     private final TaskRepository taskRepository;
 
     @Transactional
@@ -28,8 +29,9 @@ public class CommentService implements CommentServiceApi {
         Long tempUserId = 1L;
         Long tempTaskId = 1L;
 
-        User user = userRepository.findById(tempUserId)
-                .orElseThrow(() -> new EntityNotFoundException("테스트 사용자를 찾을 수 없습니다"));
+
+        User user = userService.findUserById(tempUserId);
+
         Task task = taskRepository.findById(tempTaskId)
                 .orElseThrow(() -> new EntityNotFoundException("테스트로 작성된 작업을 찾을수없습니다."));
 
@@ -45,7 +47,6 @@ public class CommentService implements CommentServiceApi {
                 request.getContent(),
                 parent
         );
-
         Comment savedComment = commentRepository.save(newComment);
 
         return CommentCreateResponse.from(savedComment);
