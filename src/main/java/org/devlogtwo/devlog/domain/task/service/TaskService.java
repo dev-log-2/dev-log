@@ -1,8 +1,11 @@
 package org.devlogtwo.devlog.domain.task.service;
 
 import lombok.RequiredArgsConstructor;
+import org.devlogtwo.devlog.common.code.ErrorCode;
+import org.devlogtwo.devlog.common.exception.CustomBusinessException;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskCreateRequest;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskCreateResponse;
+import org.devlogtwo.devlog.domain.task.dto.response.TaskResponse;
 import org.devlogtwo.devlog.domain.task.entity.Task;
 import org.devlogtwo.devlog.domain.task.repository.TaskRepository;
 import org.devlogtwo.devlog.domain.user.entity.User;
@@ -29,5 +32,15 @@ public class TaskService implements TaskServiceApi {
         Task savedTask = taskRepository.save(task);
 
         return TaskCreateResponse.from(savedTask);
+    }
+
+    @Transactional(readOnly = true)
+    public TaskResponse getTask(Long taskId) {
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new CustomBusinessException(ErrorCode.TASK_NOT_FOUND));
+
+        return TaskResponse.from(task);
+
     }
 }
