@@ -1,10 +1,8 @@
 package org.devlogtwo.devlog.domain.task.service;
 
 import lombok.RequiredArgsConstructor;
-import org.devlogtwo.devlog.common.code.ErrorCode;
-import org.devlogtwo.devlog.common.exception.CustomBusinessException;
-import org.devlogtwo.devlog.domain.task.dto.TaskCreateRequest;
-import org.devlogtwo.devlog.domain.task.dto.TaskCreateResponse;
+import org.devlogtwo.devlog.domain.task.dto.request.TaskCreateRequest;
+import org.devlogtwo.devlog.domain.task.dto.response.TaskCreateResponse;
 import org.devlogtwo.devlog.domain.task.entity.Task;
 import org.devlogtwo.devlog.domain.task.repository.TaskRepository;
 import org.devlogtwo.devlog.domain.user.entity.User;

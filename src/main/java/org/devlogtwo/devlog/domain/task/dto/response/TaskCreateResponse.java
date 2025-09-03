@@ -1,4 +1,4 @@
-package org.devlogtwo.devlog.domain.task.dto;
+package org.devlogtwo.devlog.domain.task.dto.response;
 
 import java.time.LocalDateTime;
 import org.devlogtwo.devlog.common.type.TaskPriority;

@@ -1,4 +1,4 @@
-package org.devlogtwo.devlog.domain.task.dto;
+package org.devlogtwo.devlog.domain.task.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
