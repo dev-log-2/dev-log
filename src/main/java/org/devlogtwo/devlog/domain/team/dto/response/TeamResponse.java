@@ -4,15 +4,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.devlogtwo.devlog.domain.team.entity.Team;
 
-public record TeamCreateResponse(
+public record TeamResponse(
         Long id,
         String name,
         String description,
         LocalDateTime createdAt,
         List<TeamMemberResponse> members
 ) {
-    public static TeamCreateResponse of(Team team, List<TeamMemberResponse> members) {
-        return new TeamCreateResponse(
+    public static TeamResponse of(Team team, List<TeamMemberResponse> members) {
+        return new TeamResponse(
                 team.getId(),
                 team.getName(),
                 team.getDescription(),
