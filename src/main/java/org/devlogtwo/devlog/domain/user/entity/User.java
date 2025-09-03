@@ -9,14 +9,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.devlogtwo.devlog.common.entity.BaseTimeEntity;
 import org.devlogtwo.devlog.common.type.UserRole;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class User extends BaseTimeEntity {
 
     @Id
