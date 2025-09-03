@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devlogtwo.devlog.common.entity.BaseTimeEntity;
@@ -48,4 +49,26 @@ public class Task extends BaseTimeEntity {
     private LocalDateTime dueDate;
 
     private LocalDateTime deletedAt;
+
+    @Builder
+    private Task(String title, String description, TaskPriority priority, User assignee, LocalDateTime dueDate) {
+        this.title = title;
+        this.description = description;
+        this.status = TaskStatus.TODO;
+        this.priority = priority;
+        this.assignee = assignee;
+        this.dueDate = dueDate;
+    }
+
+    // 정적 팩토리 메소드
+    public static Task create(String title, String description, TaskPriority priority, User assignee,
+                              LocalDateTime dueDate) {
+        return Task.builder()
+                .title(title)
+                .description(description)
+                .priority(priority)
+                .assignee(assignee)
+                .dueDate(dueDate)
+                .build();
+    }
 }
