@@ -36,8 +36,10 @@ public record TaskResponse(
 
     public static TaskResponse from(Task task) {
         User assignee = task.getAssignee();
+
         return new TaskResponse(task.getId(), task.getTitle(), task.getDescription(), task.getDueDate(),
-                task.getPriority(), task.getStatus(), assignee.getId(), Assignee.from(assignee), task.getCreatedAt(),
+                task.getPriority(), task.getStatus(), assignee != null ? assignee.getId() : null,
+                Assignee.from(assignee), task.getCreatedAt(),
                 task.getUpdatedAt());
     }
 }

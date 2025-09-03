@@ -47,7 +47,8 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<GlobalApiResponse<TaskPageResponse>> getTaskList(@RequestParam(required = false) TaskStatus status, Pageable pageable) {
+    public ResponseEntity<GlobalApiResponse<TaskPageResponse>> getTaskList(
+            @RequestParam(required = false) TaskStatus status, Pageable pageable) {
 
         TaskPageResponse response = taskService.getTaskList(status, pageable);
         return ResponseHelper.success(SuccessCode.GET_TASKS_SUCCESS, response);
