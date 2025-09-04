@@ -1,5 +1,6 @@
 package org.devlogtwo.devlog.domain.auth.service;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
@@ -7,6 +8,7 @@ import org.devlogtwo.devlog.common.security.JwtTokenProvider;
 import org.devlogtwo.devlog.common.type.UserRole;
 import org.devlogtwo.devlog.domain.auth.dto.request.AuthLoginRequest;
 import org.devlogtwo.devlog.domain.auth.dto.request.AuthRegisterRequest;
+import org.devlogtwo.devlog.domain.auth.dto.request.AuthWithdrawRequest;
 import org.devlogtwo.devlog.domain.auth.dto.response.AuthLoginResponse;
 import org.devlogtwo.devlog.domain.auth.dto.response.AuthRegisterResponse;
 import org.devlogtwo.devlog.domain.user.entity.User;
@@ -26,13 +28,13 @@ public class AuthService {
 
     public AuthRegisterResponse signUp(AuthRegisterRequest authRegisterRequest) {
 
-        // username 중복 검증
-        if (userRepository.existsByUsername(authRegisterRequest.username())) {
+        // username 중복 검증 -> soft delete 된 계정의 email도 사용하지 못 하도록 native query 사용
+        if (userRepository.existsByUsernameIgnoringSoftDelete(authRegisterRequest.username()) > 0) {
             throw new CustomBusinessException(ErrorCode.DUPLICATE_USERNAME);
         }
 
-        // email 중복 검증
-        if (userRepository.existsByEmail(authRegisterRequest.email())) {
+        // email 중복 검증 -> soft delete 된 계정의 email도 사용하지 못 하도록 native query 사용
+        if (userRepository.existsByEmailIgnoringSoftDelete(authRegisterRequest.email()) > 0) {
             throw new CustomBusinessException(ErrorCode.DUPLICATE_EMAIL);
         }
 
@@ -66,5 +68,16 @@ public class AuthService {
         // token 생성
         String token = jwtTokenProvider.createToken(user.getUsername());
         return AuthLoginResponse.from(token);
+    }
+
+    public void withdraw(@Valid AuthWithdrawRequest authWithdrawRequest, Long userId) {
+
+        // 인증된 유저의 비밀번호와 입력된 비밀번호 다시 확인
+        User user = userService.findUserById(userId);
+        if (!passwordEncoder.matches(authWithdrawRequest.password(), user.getPassword())) {
+            throw new CustomBusinessException(ErrorCode.PASSWORD_CONFIRM_MISMATCH);
+        }
+
+        userRepository.delete(user);
     }
 }
