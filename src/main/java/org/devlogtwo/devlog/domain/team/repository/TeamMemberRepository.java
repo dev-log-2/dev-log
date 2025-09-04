@@ -10,5 +10,8 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
     @EntityGraph(attributePaths = {"user"})
     List<TeamMember> findByTeamId(Long teamId);
 
+    @EntityGraph(attributePaths = {"user"})
+    List<TeamMember> findByTeamIdIn(List<Long> teamIds);
+
     boolean existsByTeamIdAndUserId(Long teamId, Long userId);
 }

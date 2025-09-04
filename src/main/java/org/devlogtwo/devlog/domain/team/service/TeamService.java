@@ -1,6 +1,7 @@
 package org.devlogtwo.devlog.domain.team.service;
 
 import java.util.Collections;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
@@ -25,8 +26,16 @@ public class TeamService implements TeamServiceApi {
         return TeamResponse.of(savedTeam, Collections.emptyList());
     }
 
+
     @Override
     public Team findById(Long teamId) {
         return teamRepository.findById(teamId).orElseThrow(() -> new CustomBusinessException(ErrorCode.TEAM_NOT_FOUND));
     }
+
+    @Override
+    public List<Team> findAll() {
+        return teamRepository.findAll();
+    }
+
+
 }
