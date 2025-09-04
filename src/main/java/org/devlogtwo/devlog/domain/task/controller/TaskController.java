@@ -9,6 +9,7 @@ import org.devlogtwo.devlog.common.type.TaskStatus;
 import org.devlogtwo.devlog.common.util.ResponseHelper;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskCreateRequest;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskStatusUpdateRequest;
+import org.devlogtwo.devlog.domain.task.dto.request.TaskUpdateRequest;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskCreateResponse;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskPageResponse;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskResponse;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -64,5 +66,14 @@ public class TaskController {
         TaskResponse response = taskService.updateTaskStatus(taskId, request);
 
         return ResponseHelper.success(SuccessCode.TASK_STATUS_UPDATED, response);
+    }
+
+    @PutMapping("/{taskId}")
+    public ResponseEntity<GlobalApiResponse<TaskResponse>> updateTask(@PathVariable Long taskId,
+                                                                      @RequestBody TaskUpdateRequest request) {
+
+        TaskResponse response = taskService.updateTask(taskId, request);
+
+        return ResponseHelper.success(SuccessCode.TASK_UPDATED, response);
     }
 }

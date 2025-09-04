@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 import org.devlogtwo.devlog.common.entity.BaseTimeEntity;
 import org.devlogtwo.devlog.common.type.TaskPriority;
 import org.devlogtwo.devlog.common.type.TaskStatus;
+import org.devlogtwo.devlog.domain.task.dto.request.TaskUpdateRequest;
 import org.devlogtwo.devlog.domain.user.entity.User;
 
 @Getter
@@ -75,5 +76,14 @@ public class Task extends BaseTimeEntity {
     public void updateStatus(TaskStatus status) {
 
         this.status = status;
+    }
+
+    public void update(TaskUpdateRequest request, User assignee) {
+        this.title = request.title();
+        this.description = request.description();
+        this.dueDate = request.dueDate();
+        this.priority = request.priority();
+        this.status = request.status();
+        this.assignee = assignee;
     }
 }
