@@ -23,7 +23,7 @@ public enum SuccessCode {
 
     //--- comment Success ---
     COMMENT_CREATED(HttpStatus.CREATED, "Comment가 생성되었습니다."),
-
+    COMMENT_LIST_VIEWED(HttpStatus.OK, "댓글 목록을 조회했습니다."),
     // --- Team Success ---
     TEAM_CREATE_SUCCESS(HttpStatus.CREATED, "팀이 성공적으로 생성되었습니다."),
     TEAM_LIST_SUCCESS(HttpStatus.OK, "팀 목록이 성공적으로 조회되었습니다."),
