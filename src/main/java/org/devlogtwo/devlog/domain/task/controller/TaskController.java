@@ -16,6 +16,7 @@ import org.devlogtwo.devlog.domain.task.dto.response.TaskResponse;
 import org.devlogtwo.devlog.domain.task.service.TaskService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -75,5 +76,13 @@ public class TaskController {
         TaskResponse response = taskService.updateTask(taskId, request);
 
         return ResponseHelper.success(SuccessCode.TASK_UPDATED, response);
+    }
+
+    @DeleteMapping("/{taskId}")
+    public ResponseEntity<GlobalApiResponse<Void>> deleteTask(@PathVariable Long taskId) {
+
+        taskService.deleteTask(taskId);
+
+        return ResponseHelper.success(SuccessCode.TASK_DELETED);
     }
 }

@@ -22,6 +22,7 @@ public enum SuccessCode {
     GET_TASKS_SUCCESS(HttpStatus.OK, "Task 목록을 조회했습니다."),
     TASK_STATUS_UPDATED(HttpStatus.OK, "작업 상태가 업데이트되었습니다."),
     TASK_UPDATED(HttpStatus.OK, "Task가 수정되었습니다."),
+    TASK_DELETED(HttpStatus.OK, "태스크 삭제 성공"),
 
     //--- comment Success ---
     COMMENT_CREATED(HttpStatus.CREATED, "Comment가 생성되었습니다."),

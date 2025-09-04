@@ -91,6 +91,15 @@ public class TaskService implements TaskServiceApi {
         return TaskResponse.from(task);
     }
 
+    // 태스크 삭제
+    @Transactional
+    public void deleteTask(Long taskId) {
+
+        Task task = findTaskById(taskId);
+
+        taskRepository.delete(task);
+    }
+
 
     @Override
     public Task findTaskById(Long taskId) {
