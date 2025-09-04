@@ -21,6 +21,12 @@ public enum ErrorCode {
     PASSWORD_CONFIRM_MISMATCH(HttpStatus.BAD_REQUEST, "비밀번호 확인이 일치하지 않습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다."),
 
+    // --- Comment Errors ---
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),
+    COMMENT_NO_PERMISSION(HttpStatus.FORBIDDEN, "댓글을 삭제할 권한이 없습니다."),
+    COMMENT_NOT_IN_TASK(HttpStatus.BAD_REQUEST, "해당 작업에 존재하지 않는 댓글입니다."),
+    PARENT_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "부모 댓글을 찾을 수 없습니다."),
+
     // --- Team & TeamMember Errors ---
     TEAM_NOT_FOUND(HttpStatus.NOT_FOUND, "팀을 찾을 수 없습니다"),
     TEAM_MEMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 팀에 참여한 사용자입니다"),

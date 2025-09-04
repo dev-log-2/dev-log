@@ -1,12 +1,13 @@
 package org.devlogtwo.devlog.domain.comment.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.code.SuccessCode;
+import org.devlogtwo.devlog.common.exception.CustomBusinessException;
 import org.devlogtwo.devlog.domain.comment.dto.request.CommentCreateRequest;
 import org.devlogtwo.devlog.domain.comment.dto.response.CommentPageResponse;
 import org.devlogtwo.devlog.domain.comment.dto.response.CommentResponse;
@@ -29,6 +30,9 @@ public class CommentService implements CommentServiceApi {
     private final UserServiceApi userService;
     private final TaskServiceApi taskService;
 
+    //if (teamMemberRepository.existsByTeamIdAndUserId(teamId, request.userId())) {
+//        throw new CustomBusinessException(ErrorCode.TEAM_MEMBER_ALREADY_EXISTS);
+//    }
     @Transactional
     public CommentResponse createComment(CommentCreateRequest request, Long taskId) {
         //t 유저 받아오면 봐꿔야됨
@@ -40,7 +44,7 @@ public class CommentService implements CommentServiceApi {
         Comment parent = null;
         if (request.getParentId() != null) {
             parent = commentRepository.findById(request.getParentId())
-                    .orElseThrow(() -> new EntityNotFoundException("부모 댓글을 찾을 수 없습니다. ID: " + request.getParentId()));
+                    .orElseThrow(() -> new CustomBusinessException(ErrorCode.PARENT_COMMENT_NOT_FOUND));
         }
 
         Comment newComment = Comment.create(
@@ -95,7 +99,7 @@ public class CommentService implements CommentServiceApi {
     public SuccessCode deleteComment(Long id, Long taskId, Long commentId) {
         // 댓글조회 404에러
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomBusinessException(ErrorCode.COMMENT_NOT_FOUND));
 
         // 권한확인
         if (!comment.getUser().getId().equals(id)) {
@@ -103,7 +107,7 @@ public class CommentService implements CommentServiceApi {
         }
         // 작성한 글의 댓글이 맞나요?
         if (!comment.getTask().getId().equals(taskId)) {
-            throw new IllegalArgumentException("해당 작업에 존재하지 않는 댓글입니다.");
+            throw new CustomBusinessException(ErrorCode.COMMENT_NOT_IN_TASK);
         }
         //삭제후 개수를 받는다.
         int deletedCount = commentRepository.deleteCommentWithReplies(commentId);
