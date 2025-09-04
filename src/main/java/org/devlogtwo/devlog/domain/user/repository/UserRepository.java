@@ -33,5 +33,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             WHERE email = :email""",
             nativeQuery = true)
     Integer existsByEmailIgnoringSoftDelete(@Param("email") String email);
+
+    List<User> findAllByUsernameContainsOrNameContains(String username, String name);
 }
 
