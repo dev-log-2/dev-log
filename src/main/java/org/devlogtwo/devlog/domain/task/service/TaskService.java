@@ -6,7 +6,8 @@ import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
 import org.devlogtwo.devlog.common.type.TaskStatus;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskCreateRequest;
-import org.devlogtwo.devlog.domain.task.dto.response.TaskCreateResponse;
+import org.devlogtwo.devlog.domain.task.dto.request.TaskStatusUpdateRequest;
+import org.devlogtwo.devlog.domain.task.dto.request.TaskUpdateRequest;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskPageResponse;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskResponse;
 import org.devlogtwo.devlog.domain.task.entity.Task;
@@ -26,7 +27,7 @@ public class TaskService implements TaskServiceApi {
     private final UserServiceApi userServiceApi;
 
     @Transactional
-    public TaskCreateResponse createTask(TaskCreateRequest request) {
+    public TaskResponse createTask(TaskCreateRequest request) {
 
         // 담당자 ID 검증 로직
         User assignee = userServiceApi.findUserById(request.assigneeId());
@@ -36,15 +37,14 @@ public class TaskService implements TaskServiceApi {
 
         Task savedTask = taskRepository.save(task);
 
-        return TaskCreateResponse.from(savedTask);
+        return TaskResponse.from(savedTask);
     }
 
     // 태스크 상세 조회
     @Transactional(readOnly = true)
     public TaskResponse getTask(Long taskId) {
 
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new CustomBusinessException(ErrorCode.TASK_NOT_FOUND));
+        Task task = findTaskById(taskId);
 
         return TaskResponse.from(task);
     }
@@ -65,6 +65,40 @@ public class TaskService implements TaskServiceApi {
 
         return TaskPageResponse.from(responsePage);
     }
+
+    // 태스크 상태 업데이트
+    @Transactional
+    public TaskResponse updateTaskStatus(Long taskId, TaskStatusUpdateRequest request) {
+
+        Task task = findTaskById(taskId);
+
+        task.updateStatus(request.status());
+
+        return TaskResponse.from(task);
+    }
+
+    // 태스크 수정
+    @Transactional
+    public TaskResponse updateTask(Long taskId, TaskUpdateRequest request) {
+
+        Task task = findTaskById(taskId);
+
+        User assignee = userServiceApi.findUserById(request.assigneeId());
+
+        task.update(request, assignee);
+
+        return TaskResponse.from(task);
+    }
+
+    // 태스크 삭제
+    @Transactional
+    public void deleteTask(Long taskId) {
+
+        Task task = findTaskById(taskId);
+
+        taskRepository.delete(task);
+    }
+
 
     @Override
     public Task findTaskById(Long taskId) {
