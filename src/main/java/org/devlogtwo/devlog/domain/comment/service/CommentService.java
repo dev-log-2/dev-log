@@ -42,6 +42,9 @@ public class CommentService implements CommentServiceApi {
         if (request.getParentId() != null) {
             parent = commentRepository.findById(request.getParentId())
                     .orElseThrow(() -> new CustomBusinessException(ErrorCode.PARENT_COMMENT_NOT_FOUND));
+            if (parent.getParent() != null) {
+                throw new CustomBusinessException(ErrorCode.COMMENT_DEPTH_EXCEEDED);
+            }
         }
 
         Comment newComment = Comment.create(
