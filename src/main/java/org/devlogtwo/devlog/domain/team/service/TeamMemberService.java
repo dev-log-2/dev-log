@@ -71,5 +71,15 @@ public class TeamMemberService implements TeamMemberServiceApi {
         return teamMemberRepository.findByTeamIdIn(teamIds);
     }
 
+    @Override
+    public void deleteByTeamId(Long teamId) {
+        teamMemberRepository.deleteByTeamId(teamId);
+    }
+
+    @Override
+    public void deleteByTeamIdAndUserId(Long teamId, Long userId) {
+        teamMemberRepository.deleteByTeamIdAndUserId(teamId, userId);
+    }
+
 
 }

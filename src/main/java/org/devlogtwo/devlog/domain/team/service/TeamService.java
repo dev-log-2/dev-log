@@ -45,5 +45,10 @@ public class TeamService implements TeamServiceApi {
         return teamRepository.existsById(teamId);
     }
 
+    @Override
+    public void delete(Team team) {
+        teamRepository.delete(team);
+    }
+
 
 }

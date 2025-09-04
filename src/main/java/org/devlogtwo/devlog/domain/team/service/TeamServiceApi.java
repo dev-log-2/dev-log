@@ -10,4 +10,6 @@ public interface TeamServiceApi {
     List<Team> findAll();
 
     boolean existsById(Long teamId);
+
+    void delete(Team team);
 }

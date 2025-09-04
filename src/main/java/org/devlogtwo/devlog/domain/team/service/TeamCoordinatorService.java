@@ -1,9 +1,12 @@
 package org.devlogtwo.devlog.domain.team.service;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.devlogtwo.devlog.domain.team.dto.request.TeamUpdateRequest;
+import org.devlogtwo.devlog.domain.team.dto.response.TeamDeleteResponse;
 import org.devlogtwo.devlog.domain.team.dto.response.TeamMemberResponse;
 import org.devlogtwo.devlog.domain.team.dto.response.TeamResponse;
 import org.devlogtwo.devlog.domain.team.entity.Team;
@@ -14,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class TeamQueryService {
+public class TeamCoordinatorService {
 
     private final TeamServiceApi teamService;
     private final TeamMemberServiceApi teamMemberService;
@@ -50,5 +53,31 @@ public class TeamQueryService {
                         membersByTeamId.getOrDefault(team.getId(), List.of())
                 ))
                 .toList();
+    }
+
+
+    @Transactional
+    public TeamResponse updateTeam(Long teamId, @Valid TeamUpdateRequest request) {
+        Team team = teamService.findById(teamId);
+        team.updateTeam(request.name(), request.description());
+        return TeamResponse.of(team, teamMemberService.findTeamMembers(teamId));
+    }
+
+    @Transactional
+    public TeamDeleteResponse deleteTeam(Long teamId) {
+        Team foundTeam = teamService.findById(teamId);
+        teamMemberService.deleteByTeamId(teamId);
+        teamService.delete(foundTeam);
+        return TeamDeleteResponse.of();
+    }
+
+    @Transactional
+    public TeamResponse deleteMemberFromTeam(Long teamId, Long userId) {
+        Team team = teamService.findById(teamId);
+
+        teamMemberService.deleteByTeamIdAndUserId(teamId, userId);
+
+        List<TeamMemberResponse> members = teamMemberService.findTeamMembers(teamId);
+        return TeamResponse.of(team, members);
     }
 }
