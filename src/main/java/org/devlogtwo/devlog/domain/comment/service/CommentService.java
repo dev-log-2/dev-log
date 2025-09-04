@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.devlogtwo.devlog.common.code.SuccessCode;
 import org.devlogtwo.devlog.domain.comment.dto.request.CommentCreateRequest;
 import org.devlogtwo.devlog.domain.comment.dto.response.CommentPageResponse;
 import org.devlogtwo.devlog.domain.comment.dto.response.CommentResponse;
@@ -68,7 +69,6 @@ public class CommentService implements CommentServiceApi {
         Map<Long, List<Comment>> childrenMap = children.stream()
                 .collect(Collectors.groupingBy(comment -> comment.getParent().getId()));
 
-
         // 4. 응답 리스트 부모에서 자식 순서로
         List<CommentResponse> finalCommentList = new ArrayList<>();
         for (Comment parent : parents) {
@@ -88,6 +88,32 @@ public class CommentService implements CommentServiceApi {
                 parentPage.getSize(),
                 parentPage.getNumber()
         );
+    }
+
+    //나중에 ERROR 메세지 추가해야함
+    @Transactional
+    public SuccessCode deleteComment(Long id, Long taskId, Long commentId) {
+        // 댓글조회 404에러
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
+
+        // 권한확인
+        if (!comment.getTask().getId().equals(id)) {
+            throw new IllegalArgumentException("댓글을 삭제할 권리가 업습니다.");
+        }
+        // 작성한 글의 댓글이 맞나요?
+        if (!comment.getTask().getId().equals(taskId)) {
+            throw new IllegalArgumentException("해당 작업에 존재하지 않는 댓글입니다.");
+        }
+        //삭제후 개수를 받는다.
+        int deletedCount = commentRepository.deleteCommentWithReplies(commentId);
+
+        // 삭제된 개수에 따라 성공 메시지 반환
+        if (deletedCount > 1) {
+            return SuccessCode.COMMENT_DELETED_WITH_REPLIES;
+        } else {
+            return SuccessCode.COMMENT_DELETED_SINGLE;
+        }
     }
 }
 
