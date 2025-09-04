@@ -28,13 +28,13 @@ public class AuthService {
 
     public AuthRegisterResponse signUp(AuthRegisterRequest authRegisterRequest) {
 
-        // username 중복 검증
-        if (userRepository.existsByUsername(authRegisterRequest.username())) {
+        // username 중복 검증 -> soft delete 된 계정의 email도 사용하지 못 하도록 native query 사용
+        if (userRepository.existsByUsernameIgnoringSoftDelete(authRegisterRequest.username()) > 0) {
             throw new CustomBusinessException(ErrorCode.DUPLICATE_USERNAME);
         }
 
-        // email 중복 검증
-        if (userRepository.existsByEmail(authRegisterRequest.email())) {
+        // email 중복 검증 -> soft delete 된 계정의 email도 사용하지 못 하도록 native query 사용
+        if (userRepository.existsByEmailIgnoringSoftDelete(authRegisterRequest.email()) > 0) {
             throw new CustomBusinessException(ErrorCode.DUPLICATE_EMAIL);
         }
 
