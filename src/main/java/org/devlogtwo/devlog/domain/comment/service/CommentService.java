@@ -98,7 +98,7 @@ public class CommentService implements CommentServiceApi {
                 .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
 
         // 권한확인
-        if (!comment.getTask().getId().equals(id)) {
+        if (!comment.getUser().getId().equals(id)) {
             throw new IllegalArgumentException("댓글을 삭제할 권리가 업습니다.");
         }
         // 작성한 글의 댓글이 맞나요?
