@@ -53,6 +53,7 @@ public class CommentService implements CommentServiceApi {
         return CommentResponse.from(savedComment);
     }
 
+
     @Transactional(readOnly = true)
     public CommentPageResponse getComments(Long taskId, Pageable pageable) {
         taskService.findTaskById(taskId);
@@ -67,6 +68,7 @@ public class CommentService implements CommentServiceApi {
         Map<Long, List<Comment>> childrenMap = children.stream()
                 .collect(Collectors.groupingBy(comment -> comment.getParent().getId()));
 
+
         // 4. 응답 리스트 부모에서 자식 순서로
         List<CommentResponse> finalCommentList = new ArrayList<>();
         for (Comment parent : parents) {
@@ -80,7 +82,7 @@ public class CommentService implements CommentServiceApi {
         //출력
         //부모와 자식을 합쳐서 반환하기 떄문에 정적매소드 팩토리를 안씀
         return new CommentPageResponse(
-                finalCommentList,// 합친는 부분
+                finalCommentList,// 합치는 부분
                 parentPage.getTotalElements(),
                 parentPage.getTotalPages(),
                 parentPage.getSize(),

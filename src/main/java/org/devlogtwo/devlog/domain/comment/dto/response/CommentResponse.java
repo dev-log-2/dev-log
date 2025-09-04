@@ -1,5 +1,6 @@
 package org.devlogtwo.devlog.domain.comment.dto.response;
 
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 import org.devlogtwo.devlog.domain.comment.entity.Comment;

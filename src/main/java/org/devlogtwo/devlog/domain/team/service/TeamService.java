@@ -19,6 +19,9 @@ public class TeamService implements TeamServiceApi {
 
     @Transactional
     public TeamResponse createTeam(TeamCreateRequest request) {
+        if (teamRepository.existsByName(request.name())) {
+            throw new CustomBusinessException(ErrorCode.TEAM_ALREADY_EXISTS);
+        }
 
         Team team = Team.createTeam(request.name(), request.description());
         Team savedTeam = teamRepository.save(team);

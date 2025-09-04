@@ -8,7 +8,5 @@ public record CommentPageResponse(
         int totalPages,
         int size,
         int number
-) {
-
-}
+) {}
 
