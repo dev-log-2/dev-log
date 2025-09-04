@@ -1,5 +1,6 @@
 package org.devlogtwo.devlog.domain.team.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.code.SuccessCode;
@@ -23,7 +24,7 @@ public class TeamController {
     private final TeamQueryService teamQueryService;
 
     @PostMapping("/api/teams")
-    public ResponseEntity<GlobalApiResponse<TeamResponse>> createTeam(@RequestBody TeamCreateRequest request) {
+    public ResponseEntity<GlobalApiResponse<TeamResponse>> createTeam(@Valid @RequestBody TeamCreateRequest request) {
         TeamResponse response = teamService.createTeam(request);
         return ResponseHelper.success(SuccessCode.TEAM_CREATE_SUCCESS, response);
     }
