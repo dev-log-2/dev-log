@@ -1,5 +1,6 @@
 package org.devlogtwo.devlog.domain.user.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
@@ -15,7 +16,6 @@ public class UserService implements UserServiceApi {
 
     private final UserRepository userRepository;
 
-
     @Transactional(readOnly = true)
     public UserDetailsResponse getUserDetails(Long id) {
 
@@ -30,11 +30,16 @@ public class UserService implements UserServiceApi {
                 .orElseThrow(() -> new CustomBusinessException(ErrorCode.USER_NOT_FOUND));
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public User findUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomBusinessException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<User> getAvailableUsersForTeam(Long teamId) {
+        return userRepository.findAvailableUsersForTeam(teamId);
     }
 }
