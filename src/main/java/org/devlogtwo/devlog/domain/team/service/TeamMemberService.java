@@ -46,6 +46,7 @@ public class TeamMemberService implements TeamMemberServiceApi {
     }
 
     //여러 팀의 멤버 조회
+    @Override
     public List<TeamMember> findByTeamIds(List<Long> teamIds) {
         return teamMemberRepository.findByTeamIdIn(teamIds);
     }
