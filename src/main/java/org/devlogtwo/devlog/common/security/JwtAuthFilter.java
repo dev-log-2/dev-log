@@ -47,7 +47,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // 토큰 검증
             Claims claims = jwtTokenProvider.validateToken(bearerToken);
             String currentUsername = claims.getSubject();
-            log.info("[JwtAuthFilter] JWT Authenticated user: " + currentUsername);
+            log.debug("[JwtAuthFilter] JWT Authenticated user: " + currentUsername);
 
             // 사용자 정보 추출 및 인증 객체 생성
             setAuthentication(currentUsername);
@@ -92,6 +92,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         // 5. SecurityContextHolder에 최종 저장
         SecurityContextHolder.setContext(context);
-        log.info("[JwtAuthFilter] @AuthenticationPrincipal 생성 성공: " + principal.username());
+        log.debug("[JwtAuthFilter] @AuthenticationPrincipal 생성 성공: " + principal.username());
     }
 }
