@@ -55,7 +55,7 @@ public class CommentService implements CommentServiceApi {
 
     @Transactional
     public CommentPageResponse getComments(Long taskId, Pageable pageable) {
-        Task task = taskService.findTaskById(taskId);
+        taskService.findTaskById(taskId);
         //부모 댓글 패이징해서 조회
         Page<Comment> parentPage = commentRepository.findByTaskIdAndParentIsNull(taskId, pageable);
         List<Comment> parents = parentPage.getContent();
