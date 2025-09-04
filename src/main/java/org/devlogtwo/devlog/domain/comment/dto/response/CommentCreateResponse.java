@@ -4,18 +4,31 @@ import java.time.LocalDateTime;
 import org.devlogtwo.devlog.domain.comment.entity.Comment;
 
 
-public record CommentCreateResponse(Long commentId, String content, Long userId, Long parentId, Long taskId,
-                                    LocalDateTime createdAt, LocalDateTime updatedAt) {
+public record CommentCreateResponse(
+        Long id,
+        String content,
+        Long taskId,
+        Long userId,
+        CommentUserResponse user,
+        Long parentId,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
+) {
+
+
     public static CommentCreateResponse from(Comment comment) {
+        // 부모 ID는 null일 수 있으므로 null 체크
+        Long parentId = (comment.getParent() != null) ? comment.getParent().getId() : null;
+
         return new CommentCreateResponse(
                 comment.getId(),
                 comment.getContent(),
-                comment.getUser().getId(),
-                comment.getParent().getId(),
                 comment.getTask().getId(),
+                comment.getUser().getId(),
+                CommentUserResponse.from(comment.getUser()),
+                parentId,
                 comment.getCreatedAt(),
                 comment.getUpdatedAt()
-
-                );
+        );
     }
 }
