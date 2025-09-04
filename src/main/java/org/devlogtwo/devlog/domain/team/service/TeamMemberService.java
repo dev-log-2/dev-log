@@ -36,12 +36,19 @@ public class TeamMemberService implements TeamMemberServiceApi {
         return TeamResponse.of(foundTeam, teamMembers);
     }
 
+    //단일 팀의 멤버 조회
     @Override
     public List<TeamMemberResponse> findTeamMembers(Long teamId) {
 
         List<TeamMember> members = teamMemberRepository.findByTeamId(teamId);
 
         return members.stream().map(TeamMemberResponse::from).toList();
+    }
+
+    //여러 팀의 멤버 조회
+    @Override
+    public List<TeamMember> findByTeamIds(List<Long> teamIds) {
+        return teamMemberRepository.findByTeamIdIn(teamIds);
     }
 
 }

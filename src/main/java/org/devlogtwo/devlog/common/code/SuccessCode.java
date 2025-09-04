@@ -28,6 +28,7 @@ public enum SuccessCode {
 
     // --- Team Success ---
     TEAM_CREATE_SUCCESS(HttpStatus.CREATED, "팀이 성공적으로 생성되었습니다."),
+    TEAM_LIST_SUCCESS(HttpStatus.OK, "팀 목록이 성공적으로 조회되었습니다."),
     TEAM_MEMBER_JOIN_SUCCESS(HttpStatus.CREATED, "멤버가 성공적으로 추가되었습니다.");
 
     private final HttpStatus httpStatus;
