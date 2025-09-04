@@ -6,6 +6,7 @@ import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
 import org.devlogtwo.devlog.common.type.TeamRole;
 import org.devlogtwo.devlog.domain.team.dto.request.TeamMemberJoinRequest;
+import org.devlogtwo.devlog.domain.team.dto.response.AvailableTeamMemberResponse;
 import org.devlogtwo.devlog.domain.team.dto.response.TeamMemberResponse;
 import org.devlogtwo.devlog.domain.team.dto.response.TeamResponse;
 import org.devlogtwo.devlog.domain.team.entity.Team;
@@ -36,6 +37,21 @@ public class TeamMemberService implements TeamMemberServiceApi {
         return TeamResponse.of(foundTeam, teamMembers);
     }
 
+    @Transactional(readOnly = true)
+    public List<AvailableTeamMemberResponse> getAvailableTeamMembers(Long teamId) {
+
+        if (!teamService.existsById(teamId)) {
+            throw new CustomBusinessException(ErrorCode.TEAM_NOT_FOUND);
+        }
+
+        List<User> availableUsersForTeam = userService.getAvailableUsersForTeam(teamId);
+
+        return availableUsersForTeam.stream()
+                .map(AvailableTeamMemberResponse::from)
+                .toList();
+
+    }
+
     //단일 팀의 멤버 조회
     @Override
     public List<TeamMemberResponse> findTeamMembers(Long teamId) {
@@ -54,5 +70,6 @@ public class TeamMemberService implements TeamMemberServiceApi {
     public List<TeamMember> findByTeamIds(List<Long> teamIds) {
         return teamMemberRepository.findByTeamIdIn(teamIds);
     }
+
 
 }
