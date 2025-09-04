@@ -38,15 +38,7 @@ public class AuthService {
             throw new CustomBusinessException(ErrorCode.DUPLICATE_EMAIL);
         }
 
-        // 비밀번호, 비밀번호 확인 일치 여부 검증
-        String password = authRegisterRequest.password();
-        String passwordConfirm = authRegisterRequest.passwordConfirm();
-
-        if (!password.equals(passwordConfirm)) {
-            throw new CustomBusinessException(ErrorCode.PASSWORD_CONFIRM_MISMATCH);
-        }
-
-        String encodedPassword = passwordEncoder.encode(password);
+        String encodedPassword = passwordEncoder.encode(authRegisterRequest.password());
         User newUser = User.signUp(authRegisterRequest.username(), authRegisterRequest.name(),
                 authRegisterRequest.email(), encodedPassword, UserRole.USER);
 

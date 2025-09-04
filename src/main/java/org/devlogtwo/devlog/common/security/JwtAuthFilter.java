@@ -38,16 +38,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String authHeaderValue = getAuthHeaderValue(request);
             String bearerToken = getToken(authHeaderValue);
 
+            log.info(bearerToken);
             // 토큰 존재 여부 확인
             if (bearerToken == null) {
                 filterChain.doFilter(request, response);
+                log.info("[JwtAuthFilter] 토큰이 존재하지 않습니다.");
                 return;
             }
 
+            log.info("[JwtAuthFilter] 토큰이 존재합니다.");
             // 토큰 검증
             Claims claims = jwtTokenProvider.validateToken(bearerToken);
             String currentUsername = claims.getSubject();
-            log.debug("[JwtAuthFilter] JWT Authenticated user: " + currentUsername);
+            log.info("[JwtAuthFilter] JWT Authenticated user: " + currentUsername);
 
             // 사용자 정보 추출 및 인증 객체 생성
             setAuthentication(currentUsername);
