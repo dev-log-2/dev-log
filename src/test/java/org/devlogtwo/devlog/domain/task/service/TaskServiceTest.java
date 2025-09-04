@@ -4,9 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.times;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
 import org.devlogtwo.devlog.common.type.TaskPriority;
 import org.devlogtwo.devlog.common.type.UserRole;
@@ -66,6 +70,21 @@ public class TaskServiceTest {
         assertThat(response).isNotNull();
         assertThat(response.title()).isEqualTo(task.getTitle());
         assertThat(response.assignee().id()).isEqualTo(assignee.getId());
+    }
+
+    @Test
+    @DisplayName("담당자가 존재 하지 않을 시 태스크 생성 시 예외가 발생한다.")
+    public void createTask_UserNotFound() {
+        // given
+        Long userId = 999L;
+        TaskCreateRequest request = new TaskCreateRequest(
+                "새로운 태스크", "설명", LocalDateTime.now().plusDays(1), TaskPriority.MEDIUM, userId);
+
+        given(userServiceApi.findUserById(request.assigneeId())).willThrow(
+                new CustomBusinessException(ErrorCode.USER_NOT_FOUND));
+
+        // when & then
+        assertThrows(CustomBusinessException.class, () -> taskService.createTask(request));
     }
 
     @Test
