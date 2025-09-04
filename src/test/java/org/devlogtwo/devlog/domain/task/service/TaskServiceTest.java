@@ -1,6 +1,7 @@
 package org.devlogtwo.devlog.domain.task.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -68,7 +69,7 @@ public class TaskServiceTest {
     }
 
     @Test
-    @DisplayName("태스크 상세 조회 성공")
+    @DisplayName("태스크 상세 조회 성공 테스트")
     void getTasks() {
         // given
         Long taskId = 1L;
@@ -81,6 +82,19 @@ public class TaskServiceTest {
         assertThat(response).isNotNull();
         assertThat(response.id()).isEqualTo(taskId);
         assertThat(response.title()).isEqualTo(task.getTitle());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 ID로 조회 시 예외가 발생한다.")
+    void getTask_TaskNotFound() {
+        // given
+        Long taskId = 999L;
+        given(taskRepository.findById(taskId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThrows(CustomBusinessException.class, () -> {
+            taskService.getTask(taskId);
+        });
     }
 
 
