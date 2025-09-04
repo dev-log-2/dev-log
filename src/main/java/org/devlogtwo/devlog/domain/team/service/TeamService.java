@@ -40,5 +40,10 @@ public class TeamService implements TeamServiceApi {
         return teamRepository.findAll();
     }
 
+    @Override
+    public boolean existsById(Long teamId) {
+        return teamRepository.existsById(teamId);
+    }
+
 
 }

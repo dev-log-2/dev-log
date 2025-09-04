@@ -8,4 +8,6 @@ public interface TeamServiceApi {
     Team findById(Long teamId);
 
     List<Team> findAll();
+
+    boolean existsById(Long teamId);
 }
