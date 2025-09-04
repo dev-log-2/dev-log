@@ -24,6 +24,7 @@ public enum ErrorCode {
     // --- Team & TeamMember Errors ---
     TEAM_NOT_FOUND(HttpStatus.NOT_FOUND, "팀을 찾을 수 없습니다"),
     TEAM_MEMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 팀에 참여한 사용자입니다"),
+    TEAM_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 팀명입니다"),
 
     // --- Task Errors ---
     TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 태스크를 찾을 수 없습니다.");
