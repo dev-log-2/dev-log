@@ -19,6 +19,12 @@ public class TeamQueryService {
     private final TeamServiceApi teamService;
     private final TeamMemberServiceApi teamMemberService;
 
+    public TeamResponse getTeam(Long teamId) {
+        Team team = teamService.findById(teamId);
+        List<TeamMemberResponse> members = teamMemberService.findTeamMembers(teamId);
+        return TeamResponse.of(team, members);
+    }
+
     public List<TeamResponse> getTeams() {
 
         List<Team> teams = teamService.findAll();

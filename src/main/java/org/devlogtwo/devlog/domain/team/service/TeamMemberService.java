@@ -40,6 +40,10 @@ public class TeamMemberService implements TeamMemberServiceApi {
     @Override
     public List<TeamMemberResponse> findTeamMembers(Long teamId) {
 
+        if (!teamService.existsById(teamId)) {
+            throw new CustomBusinessException(ErrorCode.TEAM_NOT_FOUND);
+        }
+
         List<TeamMember> members = teamMemberRepository.findByTeamId(teamId);
 
         return members.stream().map(TeamMemberResponse::from).toList();
