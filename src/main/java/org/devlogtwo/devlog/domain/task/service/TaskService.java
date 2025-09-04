@@ -44,8 +44,7 @@ public class TaskService implements TaskServiceApi {
     @Transactional(readOnly = true)
     public TaskResponse getTask(Long taskId) {
 
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new CustomBusinessException(ErrorCode.TASK_NOT_FOUND));
+        Task task = findTaskById(taskId);
 
         return TaskResponse.from(task);
     }
