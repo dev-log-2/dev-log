@@ -8,6 +8,7 @@ public record UserDetailsResponse(
         Long id,
         String username,
         String email,
+        String name,
         UserRole role,
         LocalDateTime createdAt
 ) {
@@ -16,6 +17,7 @@ public record UserDetailsResponse(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getName(),
                 user.getRole(),
                 user.getCreatedAt()
         );
