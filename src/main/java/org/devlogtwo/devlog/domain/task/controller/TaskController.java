@@ -8,6 +8,7 @@ import org.devlogtwo.devlog.common.dto.GlobalApiResponse;
 import org.devlogtwo.devlog.common.type.TaskStatus;
 import org.devlogtwo.devlog.common.util.ResponseHelper;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskCreateRequest;
+import org.devlogtwo.devlog.domain.task.dto.request.TaskStatusUpdateRequest;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskCreateResponse;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskPageResponse;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskResponse;
@@ -15,6 +16,7 @@ import org.devlogtwo.devlog.domain.task.service.TaskService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,6 +53,16 @@ public class TaskController {
             @RequestParam(required = false) TaskStatus status, Pageable pageable) {
 
         TaskPageResponse response = taskService.getTaskList(status, pageable);
+
         return ResponseHelper.success(SuccessCode.GET_TASKS_SUCCESS, response);
+    }
+
+    @PatchMapping("/{taskId}/status")
+    public ResponseEntity<GlobalApiResponse<TaskResponse>> updateTaskStatus(@PathVariable Long taskId,
+                                                                            @RequestBody TaskStatusUpdateRequest request) {
+
+        TaskResponse response = taskService.updateTaskStatus(taskId, request);
+
+        return ResponseHelper.success(SuccessCode.TASK_STATUS_UPDATED, response);
     }
 }

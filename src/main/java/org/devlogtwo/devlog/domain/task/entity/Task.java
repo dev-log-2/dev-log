@@ -71,4 +71,9 @@ public class Task extends BaseTimeEntity {
                 .dueDate(dueDate)
                 .build();
     }
+
+    public void updateStatus(TaskStatus status) {
+
+        this.status = status;
+    }
 }

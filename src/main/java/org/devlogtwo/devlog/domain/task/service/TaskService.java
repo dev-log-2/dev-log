@@ -6,6 +6,7 @@ import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
 import org.devlogtwo.devlog.common.type.TaskStatus;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskCreateRequest;
+import org.devlogtwo.devlog.domain.task.dto.request.TaskStatusUpdateRequest;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskCreateResponse;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskPageResponse;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskResponse;
@@ -65,6 +66,18 @@ public class TaskService implements TaskServiceApi {
 
         return TaskPageResponse.from(responsePage);
     }
+
+    // 태스크 상태 업데이트
+    @Transactional(readOnly = true)
+    public TaskResponse updateTaskStatus(Long taskId, TaskStatusUpdateRequest request) {
+
+        Task task = findTaskById(taskId);
+
+        task.updateStatus(request.status());
+
+        return TaskResponse.from(task);
+    }
+
 
     @Override
     public Task findTaskById(Long taskId) {
