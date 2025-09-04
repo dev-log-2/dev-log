@@ -4,13 +4,12 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.domain.comment.dto.request.CommentCreateRequest;
 import org.devlogtwo.devlog.domain.comment.dto.response.CommentCreateResponse;
-
 import org.devlogtwo.devlog.domain.comment.entity.Comment;
 import org.devlogtwo.devlog.domain.comment.repository.CommentRepository;
 import org.devlogtwo.devlog.domain.task.entity.Task;
-import org.devlogtwo.devlog.domain.task.repository.TaskRepository;
+import org.devlogtwo.devlog.domain.task.service.TaskServiceApi;
 import org.devlogtwo.devlog.domain.user.entity.User;
-import org.devlogtwo.devlog.domain.user.repository.UserRepository;
+import org.devlogtwo.devlog.domain.user.service.UserServiceApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,19 +18,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService implements CommentServiceApi {
 
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
-    private final TaskRepository taskRepository;
+    private final UserServiceApi userService;
+    private final TaskServiceApi taskService;
 
     @Transactional
-    public CommentCreateResponse createComment(CommentCreateRequest request) {
-
+    public CommentCreateResponse createComment(CommentCreateRequest request, Long taskId) {
+        //t 유저 받아오면 봐꿔야됨
         Long tempUserId = 1L;
-        Long tempTaskId = 1L;
 
-        User user = userRepository.findById(tempUserId)
-                .orElseThrow(() -> new EntityNotFoundException("테스트 사용자를 찾을 수 없습니다"));
-        Task task = taskRepository.findById(tempTaskId)
-                .orElseThrow(() -> new EntityNotFoundException("테스트로 작성된 작업을 찾을수없습니다."));
+        User user = userService.findUserById(tempUserId);
+        Task task = taskService.findTaskById(taskId);
 
         Comment parent = null;
         if (request.getParentId() != null) {
@@ -45,13 +41,10 @@ public class CommentService implements CommentServiceApi {
                 request.getContent(),
                 parent
         );
-
         Comment savedComment = commentRepository.save(newComment);
 
         return CommentCreateResponse.from(savedComment);
     }
-
-
 
 
 }
