@@ -34,4 +34,13 @@ public class Team extends BaseTimeEntity {
     public static Team createTeam(String name, String description) {
         return Team.builder().name(name).description(description).build();
     }
+
+    public void updateTeam(String name, String description) {
+        if (name != null && !name.isBlank()) {
+            this.name = name;
+        }
+        if (description != null) {
+            this.description = description;
+        }
+    }
 }
