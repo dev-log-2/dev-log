@@ -61,7 +61,7 @@ public class TaskController {
 
     @PatchMapping("/{taskId}/status")
     public ResponseEntity<GlobalApiResponse<TaskResponse>> updateTaskStatus(@PathVariable Long taskId,
-                                                                            @RequestBody TaskStatusUpdateRequest request) {
+                                                                            @Valid @RequestBody TaskStatusUpdateRequest request) {
 
         TaskResponse response = taskService.updateTaskStatus(taskId, request);
 
@@ -70,7 +70,7 @@ public class TaskController {
 
     @PutMapping("/{taskId}")
     public ResponseEntity<GlobalApiResponse<TaskResponse>> updateTask(@PathVariable Long taskId,
-                                                                      @RequestBody TaskUpdateRequest request) {
+                                                                      @Valid @RequestBody TaskUpdateRequest request) {
 
         TaskResponse response = taskService.updateTask(taskId, request);
 
