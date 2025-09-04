@@ -67,7 +67,7 @@ public class TaskService implements TaskServiceApi {
     }
 
     // 태스크 상태 업데이트
-    @Transactional(readOnly = true)
+    @Transactional
     public TaskResponse updateTaskStatus(Long taskId, TaskStatusUpdateRequest request) {
 
         Task task = findTaskById(taskId);
