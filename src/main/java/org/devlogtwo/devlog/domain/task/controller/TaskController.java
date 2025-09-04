@@ -10,7 +10,6 @@ import org.devlogtwo.devlog.common.util.ResponseHelper;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskCreateRequest;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskStatusUpdateRequest;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskUpdateRequest;
-import org.devlogtwo.devlog.domain.task.dto.response.TaskCreateResponse;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskPageResponse;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskResponse;
 import org.devlogtwo.devlog.domain.task.service.TaskService;
@@ -35,10 +34,10 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping
-    public ResponseEntity<GlobalApiResponse<TaskCreateResponse>> createTask(
+    public ResponseEntity<GlobalApiResponse<TaskResponse>> createTask(
             @Valid @RequestBody TaskCreateRequest request) {
 
-        TaskCreateResponse response = taskService.createTask(request);
+        TaskResponse response = taskService.createTask(request);
 
         return ResponseHelper.success(SuccessCode.TASK_CREATED, response);
     }

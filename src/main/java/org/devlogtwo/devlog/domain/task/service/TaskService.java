@@ -8,7 +8,6 @@ import org.devlogtwo.devlog.common.type.TaskStatus;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskCreateRequest;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskStatusUpdateRequest;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskUpdateRequest;
-import org.devlogtwo.devlog.domain.task.dto.response.TaskCreateResponse;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskPageResponse;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskResponse;
 import org.devlogtwo.devlog.domain.task.entity.Task;
@@ -28,7 +27,7 @@ public class TaskService implements TaskServiceApi {
     private final UserServiceApi userServiceApi;
 
     @Transactional
-    public TaskCreateResponse createTask(TaskCreateRequest request) {
+    public TaskResponse createTask(TaskCreateRequest request) {
 
         // 담당자 ID 검증 로직
         User assignee = userServiceApi.findUserById(request.assigneeId());
@@ -38,7 +37,7 @@ public class TaskService implements TaskServiceApi {
 
         Task savedTask = taskRepository.save(task);
 
-        return TaskCreateResponse.from(savedTask);
+        return TaskResponse.from(savedTask);
     }
 
     // 태스크 상세 조회
