@@ -1,4 +1,4 @@
-package org.devlogtwo.devlog.common.config;
+package org.devlogtwo.devlog.common.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -8,18 +8,16 @@ import jakarta.annotation.PostConstruct;
 import java.time.Instant;
 import java.util.Date;
 import javax.crypto.SecretKey;
-import org.devlogtwo.devlog.domain.user.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JwtUtil {
+public class JwtTokenProvider {
 
-    // Token 식별자
-    private final static String BEARER_PREFIX = "Bearer ";
 
     @Value("${jwt.secret.key}")
     private String secretKeyString;
+
     @Value("${jwt.expiration}")
     private long tokenExpirationTime;
     private SecretKey secretKey;
@@ -31,24 +29,23 @@ public class JwtUtil {
     }
 
 
-    public String createToken(Long userId, User user) {
+    public String createToken(String username) {
 
         Claims claims = Jwts.claims()
-                .add("userId", userId)
-                .add("role", user.getRole().name())
+                .add("username", username)
                 .build();
 
         Instant now = Instant.now();
         return Jwts.builder()
                 .claims(claims)
-                .subject(user.getUsername())
+                .subject(username)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusMillis(tokenExpirationTime)))
                 .signWith(secretKey)
                 .compact();
     }
 
-    public Claims parseToken(String token) {
+    public Claims validateToken(String token) {
         return Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
