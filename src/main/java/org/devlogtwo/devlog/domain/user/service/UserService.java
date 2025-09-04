@@ -3,6 +3,7 @@ package org.devlogtwo.devlog.domain.user.service;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
+import org.devlogtwo.devlog.domain.user.dto.response.UserDetailsResponse;
 import org.devlogtwo.devlog.domain.user.entity.User;
 import org.devlogtwo.devlog.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,14 @@ public class UserService implements UserServiceApi {
 
     private final UserRepository userRepository;
 
+
+    @Transactional(readOnly = true)
+    public UserDetailsResponse getUserDetails(Long id) {
+
+        User user = findUserById(id);
+        return UserDetailsResponse.from(user);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public User findUserById(Long userId) {
@@ -23,6 +32,7 @@ public class UserService implements UserServiceApi {
 
 
     @Override
+    @Transactional(readOnly = true)
     public User findUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomBusinessException(ErrorCode.USER_NOT_FOUND));
