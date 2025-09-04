@@ -20,10 +20,14 @@ import org.devlogtwo.devlog.common.type.TaskPriority;
 import org.devlogtwo.devlog.common.type.TaskStatus;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskUpdateRequest;
 import org.devlogtwo.devlog.domain.user.entity.User;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@SQLDelete(sql = "UPDATE task SET deleted_at = current_timestamp WHERE id = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class Task extends BaseTimeEntity {
 
     @Id
