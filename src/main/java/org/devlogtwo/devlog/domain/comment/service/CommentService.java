@@ -1,12 +1,13 @@
 package org.devlogtwo.devlog.domain.comment.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.code.SuccessCode;
+import org.devlogtwo.devlog.common.exception.CustomBusinessException;
 import org.devlogtwo.devlog.domain.comment.dto.request.CommentCreateRequest;
 import org.devlogtwo.devlog.domain.comment.dto.response.CommentPageResponse;
 import org.devlogtwo.devlog.domain.comment.dto.response.CommentResponse;
@@ -29,18 +30,21 @@ public class CommentService implements CommentServiceApi {
     private final UserServiceApi userService;
     private final TaskServiceApi taskService;
 
-    @Transactional
-    public CommentResponse createComment(CommentCreateRequest request, Long taskId) {
-        //t 유저 받아오면 봐꿔야됨
-        Long tempUserId = 1L;
 
-        User user = userService.findUserById(tempUserId);
+    @Transactional
+    public CommentResponse createComment(CommentCreateRequest request, Long taskId, Long userId) {
+
+        User user = userService.findUserById(userId);
         Task task = taskService.findTaskById(taskId);
 
+        // 삼항연산자 어때? 리펙토링 해야겠지?
         Comment parent = null;
         if (request.getParentId() != null) {
             parent = commentRepository.findById(request.getParentId())
-                    .orElseThrow(() -> new EntityNotFoundException("부모 댓글을 찾을 수 없습니다. ID: " + request.getParentId()));
+                    .orElseThrow(() -> new CustomBusinessException(ErrorCode.PARENT_COMMENT_NOT_FOUND));
+            if (parent.getParent() != null) {
+                throw new CustomBusinessException(ErrorCode.COMMENT_DEPTH_EXCEEDED);
+            }
         }
 
         Comment newComment = Comment.create(
@@ -78,7 +82,7 @@ public class CommentService implements CommentServiceApi {
             List<Comment> replies = childrenMap.getOrDefault(parent.getId(), List.of());
             replies.forEach(reply -> finalCommentList.add(CommentResponse.from(reply)));
         }
-
+        //리팩토링 가능
         //출력
         //부모와 자식을 합쳐서 반환하기 떄문에 정적매소드 팩토리를 안씀
         return new CommentPageResponse(
@@ -92,28 +96,44 @@ public class CommentService implements CommentServiceApi {
 
     //나중에 ERROR 메세지 추가해야함
     @Transactional
-    public SuccessCode deleteComment(Long id, Long taskId, Long commentId) {
+    public SuccessCode deleteComment(Long userid, Long commentId, Long taskId) {
         // 댓글조회 404에러
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomBusinessException(ErrorCode.COMMENT_NOT_FOUND));
 
         // 권한확인
-        if (!comment.getUser().getId().equals(id)) {
-            throw new IllegalArgumentException("댓글을 삭제할 권리가 업습니다.");
+        if (!comment.getUser().getId().equals(userid)) {
+            throw new CustomBusinessException(ErrorCode.COMMENT_NO_PERMISSION);
         }
         // 작성한 글의 댓글이 맞나요?
         if (!comment.getTask().getId().equals(taskId)) {
-            throw new IllegalArgumentException("해당 작업에 존재하지 않는 댓글입니다.");
+            throw new CustomBusinessException(ErrorCode.COMMENT_NOT_IN_TASK);
         }
-        //삭제후 개수를 받는다.
-        int deletedCount = commentRepository.deleteCommentWithReplies(commentId);
 
-        // 삭제된 개수에 따라 성공 메시지 반환
+        //재귀적삭제 메서드 호출
+        int deletedCount = deleteCommentRecursively(comment);
+
         if (deletedCount > 1) {
             return SuccessCode.COMMENT_DELETED_WITH_REPLIES;
         } else {
             return SuccessCode.COMMENT_DELETED_SINGLE;
         }
     }
-}
 
+    //재귀적으로 댓글과 모든 대댓글 삭제
+    private int deleteCommentRecursively(Comment comment) {
+        // 자식 댓글 조회
+        List<Comment> children = commentRepository.findByParentId(comment.getId());
+
+        int count = 1; // 자기 자신 포함
+
+        // 자식 댓글이 있으면 재귀적으로 삭제
+        for (Comment child : children) {
+            count += deleteCommentRecursively(child);
+        }
+        // 자기 자신 삭제
+        commentRepository.delete(comment);
+
+        return count;
+    }
+}

@@ -36,10 +36,10 @@ public class CommentController {
     @PostMapping("/comments")
     public ResponseEntity<GlobalApiResponse<CommentResponse>> createComment(
             @PathVariable Long taskId,
-            @Valid @RequestBody CommentCreateRequest request
+            @Valid @RequestBody CommentCreateRequest request,
+            @AuthenticationPrincipal UserPrincipal AushUser
     ) {
-
-        CommentResponse response = commentService.createComment(request, taskId);
+        CommentResponse response = commentService.createComment(request, taskId, AushUser.id());
 
         return ResponseHelper.success(SuccessCode.COMMENT_CREATED, response);
     }
