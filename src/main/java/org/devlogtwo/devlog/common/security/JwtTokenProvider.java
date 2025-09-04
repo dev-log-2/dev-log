@@ -32,6 +32,7 @@ public class JwtTokenProvider {
     public String createToken(String username) {
 
         Claims claims = Jwts.claims()
+                .add("username", username)
                 .build();
 
         Instant now = Instant.now();
