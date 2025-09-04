@@ -53,22 +53,21 @@ public class CommentService implements CommentServiceApi {
         return CommentResponse.from(savedComment);
     }
 
-    @Transactional
+
+    @Transactional(readOnly = true)
     public CommentPageResponse getComments(Long taskId, Pageable pageable) {
-        Task task = taskService.findTaskById(taskId);
+        taskService.findTaskById(taskId);
         //부모 댓글 패이징해서 조회
         Page<Comment> parentPage = commentRepository.findByTaskIdAndParentIsNull(taskId, pageable);
         List<Comment> parents = parentPage.getContent();
 
-        if (parents.isEmpty()) {
-            return CommentPageResponse.from(Page.empty()); // 부모 댓글이 없으면 빈 페이지 반환
-        }
         //자식 댓글들을 쿼리를 쏴서 조회
         List<Comment> children = commentRepository.findByParentInOrderByCreatedAtAsc(parents);
 
         // 3. 자식 댓글들을 부모 ID별로 그룹화
         Map<Long, List<Comment>> childrenMap = children.stream()
                 .collect(Collectors.groupingBy(comment -> comment.getParent().getId()));
+
 
         // 4. 응답 리스트 부모에서 자식 순서로
         List<CommentResponse> finalCommentList = new ArrayList<>();
@@ -81,8 +80,9 @@ public class CommentService implements CommentServiceApi {
         }
 
         //출력
+        //부모와 자식을 합쳐서 반환하기 떄문에 정적매소드 팩토리를 안씀
         return new CommentPageResponse(
-                finalCommentList,
+                finalCommentList,// 합치는 부분
                 parentPage.getTotalElements(),
                 parentPage.getTotalPages(),
                 parentPage.getSize(),
