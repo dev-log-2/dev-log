@@ -2,8 +2,8 @@ package org.devlogtwo.devlog.domain.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.code.ErrorCode;
-import org.devlogtwo.devlog.common.config.JwtUtil;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
+import org.devlogtwo.devlog.common.security.JwtTokenProvider;
 import org.devlogtwo.devlog.common.type.UserRole;
 import org.devlogtwo.devlog.domain.auth.dto.request.AuthLoginRequest;
 import org.devlogtwo.devlog.domain.auth.dto.request.AuthRegisterRequest;
@@ -22,7 +22,7 @@ public class AuthService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public AuthRegisterResponse signUp(AuthRegisterRequest authRegisterRequest) {
 
@@ -64,7 +64,7 @@ public class AuthService {
         }
 
         // token 생성
-        String token = jwtUtil.createToken(user.getId(), user);
+        String token = jwtTokenProvider.createToken(user.getUsername());
         return AuthLoginResponse.from(token);
     }
 }
