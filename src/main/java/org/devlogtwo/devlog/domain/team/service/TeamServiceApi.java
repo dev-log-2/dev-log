@@ -11,5 +11,5 @@ public interface TeamServiceApi {
 
     boolean existsById(Long teamId);
 
-    void deleteById(Long teamId);
+    void delete(Team team);
 }

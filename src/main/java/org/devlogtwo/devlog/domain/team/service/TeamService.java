@@ -46,8 +46,8 @@ public class TeamService implements TeamServiceApi {
     }
 
     @Override
-    public void deleteById(Long teamId) {
-        teamRepository.deleteById(teamId);
+    public void delete(Team team) {
+        teamRepository.delete(team);
     }
 
 

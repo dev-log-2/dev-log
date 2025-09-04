@@ -65,9 +65,9 @@ public class TeamCoordinatorService {
 
     @Transactional
     public TeamDeleteResponse deleteTeam(Long teamId) {
-        teamService.findById(teamId);
+        Team foundTeam = teamService.findById(teamId);
         teamMemberService.deleteByTeamId(teamId);
-        teamService.deleteById(teamId);
+        teamService.delete(foundTeam);
         return TeamDeleteResponse.of();
     }
 
