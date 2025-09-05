@@ -10,6 +10,9 @@ public enum SuccessCode {
 
     // --- Common Success ---
 
+    // --- Activity Log Success --
+    ACTIVITY_LOG_SUCCESS(HttpStatus.OK, "활동 로그를 조회했습니다."),
+    
     // --- User Success ---
     SIGNUP_SUCCESS(HttpStatus.OK, "회원가입이 완료되었습니다."),
     LOGIN_SUCCESS(HttpStatus.OK, "로그인이 완료되었습니다."),
