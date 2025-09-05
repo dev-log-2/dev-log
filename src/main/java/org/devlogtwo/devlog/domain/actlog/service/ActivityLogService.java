@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class ActivityLogService {
+public class ActivityLogService implements ActivityLogServiceApi {
 
     private final ActivityLogRepository activityLogRepository;
 
@@ -41,4 +41,11 @@ public class ActivityLogService {
 
         return PageResponse.from(pages);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ActivityLog> findAllByOrderByCreatedAtDesc(Pageable pageable) {
+        return activityLogRepository.findAllByOrderByCreatedAtDesc(pageable);
+    }
+
 }
