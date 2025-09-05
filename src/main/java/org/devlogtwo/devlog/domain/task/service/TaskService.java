@@ -192,7 +192,7 @@ public class TaskService implements TaskServiceApi {
     }
 
     @Override
-    public List<Task> findAllByAssignee(Long assigneeId) {
-        return taskRepository.findAllByAssignee(assigneeId);
+    public List<Task> findAllByAssignee_Id(Long assigneeId) {
+        return taskRepository.findAllByAssignee_Id(assigneeId);
     }
 }

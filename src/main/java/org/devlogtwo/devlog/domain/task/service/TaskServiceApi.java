@@ -24,5 +24,5 @@ public interface TaskServiceApi {
 
     long countByAssigneeIdAndDueDateBetween(Long userId, LocalDateTime start, LocalDateTime end);
 
-    List<Task> findAllByAssignee(Long assigneeId);
+    List<Task> findAllByAssignee_Id(Long assigneeId);
 }
