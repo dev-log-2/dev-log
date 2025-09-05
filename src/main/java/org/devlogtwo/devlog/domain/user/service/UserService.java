@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
+import org.devlogtwo.devlog.domain.user.dto.response.UserAssignableResponse;
 import org.devlogtwo.devlog.domain.user.dto.response.UserDetailsResponse;
 import org.devlogtwo.devlog.domain.user.entity.User;
 import org.devlogtwo.devlog.domain.user.repository.UserRepository;
@@ -65,5 +66,13 @@ public class UserService implements UserServiceApi {
     @Transactional
     public void deleteUser(User user) {
         userRepository.delete(user);
+    }
+
+    public List<UserAssignableResponse> getAssignableUsers() {
+
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(UserAssignableResponse::from)
+                .toList();
     }
 }
