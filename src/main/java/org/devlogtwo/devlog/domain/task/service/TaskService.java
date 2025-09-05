@@ -80,6 +80,11 @@ public class TaskService implements TaskServiceApi {
         TaskStatus currentStatus = task.getStatus();
         TaskStatus newStatus = request.status();
 
+        // 상태 변화 없을 경우 바로 반환
+        if (currentStatus == newStatus) {
+            return TaskResponse.from(task);
+        }
+
         boolean statusChangedCheck = false;
 
         if (currentStatus == TaskStatus.TODO && newStatus == TaskStatus.IN_PROGRESS) {
