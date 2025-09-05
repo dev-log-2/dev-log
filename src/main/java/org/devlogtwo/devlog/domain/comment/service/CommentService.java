@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.devlogtwo.devlog.common.annotation.ActivityLogger;
 import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.code.SuccessCode;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
+import org.devlogtwo.devlog.common.type.ActivityType;
 import org.devlogtwo.devlog.domain.comment.dto.request.CommentCreateRequest;
 import org.devlogtwo.devlog.domain.comment.dto.request.CommentUpdateRequest;
 import org.devlogtwo.devlog.domain.comment.dto.response.CommentPageResponse;
@@ -32,6 +34,7 @@ public class CommentService implements CommentServiceApi {
     private final TaskServiceApi taskService;
 
 
+    @ActivityLogger(type = ActivityType.COMMENT_CREATE)
     @Transactional
     public CommentResponse createComment(CommentCreateRequest request, Long taskId, Long userId) {
 
@@ -96,6 +99,7 @@ public class CommentService implements CommentServiceApi {
     }
 
 
+    @ActivityLogger(type = ActivityType.COMMENT_DELETE)
     @Transactional
     public SuccessCode deleteComment(Long taskId, Long commentId, Long userid) {
         // 댓글조회 404에러
@@ -139,6 +143,7 @@ public class CommentService implements CommentServiceApi {
     }
 
     //댓글수정
+    @ActivityLogger(type = ActivityType.COMMENT_UPDATE)
     @Transactional
     public CommentResponse updateComment(
             Long userId,
