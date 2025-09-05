@@ -80,7 +80,7 @@ public class ActivityLogAspect {
 
     private String getBeforeState(ActivityType type, ProceedingJoinPoint joinPoint) {
 
-        if (type != ActivityType.TASK_STATUS_CHANGE) {
+        if (type != ActivityType.TASK_STATUS_CHANGED) {
             return null;
         }
 
@@ -98,11 +98,11 @@ public class ActivityLogAspect {
 
         if (result instanceof TaskResponse task) {
             switch (type) {
-                case TASK_CREATE:
+                case TASK_CREATED:
                     return String.format("새로운 작업 '%s'을 생성했습니다.", task.title());
-                case TASK_UPDATE:
+                case TASK_UPDATED:
                     return "작업 정보를 수정했습니다.";
-                case TASK_STATUS_CHANGE:
+                case TASK_STATUS_CHANGED:
                     if (beforeState != null) {
                         return String.format("작업 상태를 '%s'에서 '%s'로 변경했습니다.", beforeState,
                                 task.status());
@@ -111,16 +111,16 @@ public class ActivityLogAspect {
             }
         } else if (result instanceof CommentResponse comment) {
             switch (type) {
-                case COMMENT_CREATE:
+                case COMMENT_CREATED:
                     return "작업에 댓글을 작성했습니다.";
-                case COMMENT_UPDATE:
+                case COMMENT_UPDATED:
                     return "댓글을 수정했습니다.";
             }
         } else {
             switch (type) {
-                case TASK_DELETE:
+                case TASK_DELETED:
                     return "작업을 삭제했습니다.";
-                case COMMENT_DELETE:
+                case COMMENT_DELETED:
                     return "댓글을 삭제했습니다.";
             }
         }

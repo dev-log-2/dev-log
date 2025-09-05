@@ -34,19 +34,19 @@ public class ActivityLog {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
     private User user;
 
     @Enumerated(EnumType.STRING)
-    @NotNull
+    @Column(nullable = false, length = 50)
     private ActivityType type;
 
-    @NotNull
+    @Column(nullable = false)
     private Long taskId;
 
     private Long commentId;
 
     @NotNull
+    @Column(nullable = false)
     private String description;
 
     @CreatedDate
