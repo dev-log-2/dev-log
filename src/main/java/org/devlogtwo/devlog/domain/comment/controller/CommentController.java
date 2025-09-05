@@ -7,6 +7,7 @@ import org.devlogtwo.devlog.common.dto.GlobalApiResponse;
 import org.devlogtwo.devlog.common.security.UserPrincipal;
 import org.devlogtwo.devlog.common.util.ResponseHelper;
 import org.devlogtwo.devlog.domain.comment.dto.request.CommentCreateRequest;
+import org.devlogtwo.devlog.domain.comment.dto.request.CommentUpdateRequest;
 import org.devlogtwo.devlog.domain.comment.dto.response.CommentPageResponse;
 import org.devlogtwo.devlog.domain.comment.dto.response.CommentResponse;
 import org.devlogtwo.devlog.domain.comment.service.CommentService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -79,5 +81,19 @@ public class CommentController {
 
         return ResponseHelper.success(successCode);
     }
+
+    //업데이트
+    @PutMapping("/comments/{commentId}")
+    public ResponseEntity<GlobalApiResponse<CommentResponse>> updateComment(
+            @AuthenticationPrincipal UserPrincipal authUser,
+            @PathVariable Long taskId,
+            @PathVariable Long commentId,
+            @Valid @RequestBody CommentUpdateRequest request
+    ) {
+        CommentResponse commentResponse = commentService.updateComment(authUser.id(), taskId, commentId, request);
+
+        return ResponseHelper.success(SuccessCode.COMMENT_UPDATED, commentResponse);
+    }
+
 
 }
