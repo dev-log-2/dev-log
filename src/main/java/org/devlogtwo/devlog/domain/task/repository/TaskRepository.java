@@ -1,5 +1,6 @@
 package org.devlogtwo.devlog.domain.task.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.devlogtwo.devlog.common.type.TaskStatus;
 import org.devlogtwo.devlog.domain.task.entity.Task;
@@ -19,4 +20,10 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     long countByAssigneeAndStatus(User assignee, TaskStatus status);
 
     long countByAssignee(User assignee);
+
+    long countByStatus(TaskStatus status);
+
+    long countByDueDateBeforeAndStatusNot(LocalDateTime dueDate, TaskStatus status);
+
+    long countByAssigneeIdAndDueDateBetween(Long userId, LocalDateTime start, LocalDateTime end);
 }
