@@ -97,7 +97,7 @@ public class CommentService implements CommentServiceApi {
 
 
     @Transactional
-    public SuccessCode deleteComment(Long userid, Long commentId, Long taskId) {
+    public SuccessCode deleteComment(Long taskId, Long commentId, Long userid) {
         // 댓글조회 404에러
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomBusinessException(ErrorCode.COMMENT_NOT_FOUND));
