@@ -10,6 +10,7 @@ import org.devlogtwo.devlog.common.util.ResponseHelper;
 import org.devlogtwo.devlog.domain.actlog.dto.response.ActivityLogResponse;
 import org.devlogtwo.devlog.domain.actlog.service.ActivityLogService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class ActivityLogController {
             @RequestParam(required = false) Long taskId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @PageableDefault(size = 10, page = 0)
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable) {
 
         PageResponse<ActivityLogResponse> logPage = activityLogService.getActivityLogs(type, userId, taskId,

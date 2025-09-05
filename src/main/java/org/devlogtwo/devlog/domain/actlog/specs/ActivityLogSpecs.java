@@ -11,7 +11,7 @@ public class ActivityLogSpecs {
     public static Specification<ActivityLog> buildSpec(
             ActivityType type, Long userId, Long taskId, LocalDate startDate, LocalDate endDate) {
 
-        Specification<ActivityLog> spec = orderByLatest();
+        Specification<ActivityLog> spec = Specification.unrestricted();
 
         if (type != null) {
             spec = spec.and(withType(type));
@@ -22,8 +22,12 @@ public class ActivityLogSpecs {
         if (taskId != null) {
             spec = spec.and(withTaskId(taskId));
         }
-        if (startDate != null && endDate != null) {
-            spec = spec.and(withDateBetween(startDate, endDate));
+        if (startDate != null) {
+            spec = spec.and(withStartDate(startDate));
+        }
+
+        if (endDate != null) {
+            spec = spec.and(withEndDate(endDate));
         }
 
         return spec;
@@ -44,20 +48,19 @@ public class ActivityLogSpecs {
                 builder.equal(root.get("taskId"), taskId);
     }
 
-    public static Specification<ActivityLog> withDateBetween(LocalDate startDate, LocalDate endDate) {
+    private static Specification<ActivityLog> withStartDate(LocalDate startDate) {
         return (root, query, builder) ->
-                builder.between(
+                builder.greaterThanOrEqualTo(
                         root.get("createdAt"),
-                        startDate.atStartOfDay(),
-                        endDate.atTime(LocalTime.MAX)
+                        startDate.atStartOfDay()
                 );
     }
 
-    private static Specification<ActivityLog> orderByLatest() {
-        return (root, query, builder) -> {
-            // CriteriaQuery 객체에 직접 ORDER BY 추가
-            query.orderBy(builder.desc(root.get("createdAt")));
-            return builder.conjunction();
-        };
+    private static Specification<ActivityLog> withEndDate(LocalDate endDate) {
+        return (root, query, builder) ->
+                builder.lessThanOrEqualTo(
+                        root.get("createdAt"),
+                        endDate.atTime(LocalTime.MAX)
+                );
     }
 }
