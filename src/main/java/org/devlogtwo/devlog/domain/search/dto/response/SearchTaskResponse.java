@@ -1,8 +1,6 @@
 package org.devlogtwo.devlog.domain.search.dto.response;
 
 import org.devlogtwo.devlog.common.type.TaskStatus;
-import org.devlogtwo.devlog.domain.task.dto.response.TaskResponse;
-import org.devlogtwo.devlog.domain.task.dto.response.TaskResponse.Assignee;
 import org.devlogtwo.devlog.domain.task.entity.Task;
 import org.devlogtwo.devlog.domain.user.entity.User;
 

@@ -21,6 +21,7 @@ public class SearchService {
     private final TeamServiceApi teamServiceApi;
     private final TaskServiceApi taskServiceApi;
 
+    @Transactional(readOnly = true)
     public SearchResponse searchAll(String query) {
 
         List<SearchTaskResponse> tasks = taskServiceApi.findAllByTitleContainsOrDescriptionContains(query, query)
