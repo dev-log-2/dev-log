@@ -9,6 +9,7 @@ import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.code.SuccessCode;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
 import org.devlogtwo.devlog.domain.comment.dto.request.CommentCreateRequest;
+import org.devlogtwo.devlog.domain.comment.dto.request.CommentUpdateRequest;
 import org.devlogtwo.devlog.domain.comment.dto.response.CommentPageResponse;
 import org.devlogtwo.devlog.domain.comment.dto.response.CommentResponse;
 import org.devlogtwo.devlog.domain.comment.entity.Comment;
@@ -94,9 +95,9 @@ public class CommentService implements CommentServiceApi {
         );
     }
 
-    //나중에 ERROR 메세지 추가해야함
+
     @Transactional
-    public SuccessCode deleteComment(Long userid, Long commentId, Long taskId) {
+    public SuccessCode deleteComment(Long taskId, Long commentId, Long userid) {
         // 댓글조회 404에러
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomBusinessException(ErrorCode.COMMENT_NOT_FOUND));
@@ -136,4 +137,29 @@ public class CommentService implements CommentServiceApi {
 
         return count;
     }
+
+    //댓글수정
+    @Transactional
+    public CommentResponse updateComment(
+            Long userId,
+            Long taskId,
+            Long commentId,
+            CommentUpdateRequest request
+    ) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomBusinessException(ErrorCode.COMMENT_NOT_FOUND));
+        // 권한확인
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new CustomBusinessException(ErrorCode.COMMENT_NO_PERMISSION);
+        }
+        // 작성한 글의 댓글이 맞나요?
+        if (!comment.getTask().getId().equals(taskId)) {
+            throw new CustomBusinessException(ErrorCode.COMMENT_NOT_IN_TASK);
+        }
+        comment.updateContent(request.getContent());
+
+        return CommentResponse.from(comment);
+    }
+
+
 }

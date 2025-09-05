@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,11 +25,11 @@ public class Comment extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="userId",nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private User user; //작성자
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="taskId",nullable = false)
+    @JoinColumn(name = "taskId", nullable = false)
     private Task task; // 작업
 
     @Column(nullable = false, length = 1000)
@@ -47,6 +46,7 @@ public class Comment extends BaseTimeEntity {
         this.content = content;
         this.parent = parent;
     }
+
     //정적 팩토리 메소드
     public static Comment create(User user, Task task, String content, Comment parent) {
         return Comment.builder()
@@ -55,5 +55,9 @@ public class Comment extends BaseTimeEntity {
                 .content(content)
                 .parent(parent)
                 .build();
+    }
+
+    public void updateContent(String newContent) {
+        this.content = newContent;
     }
 }
