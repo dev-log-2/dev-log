@@ -10,4 +10,14 @@ public interface UserServiceApi {
     User findUserByUsername(String username);
 
     List<User> getAvailableUsersForTeam(Long teamId);
+
+    List<User> findAllByUsernameContainsOrNameContains(String username, String name);
+
+    boolean isUsernameTaken(String username);
+
+    boolean isEmailTaken(String email);
+
+    User registerNewUser(User user);
+
+    void deleteUser(User user);
 }

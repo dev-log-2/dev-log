@@ -12,4 +12,6 @@ public interface TeamServiceApi {
     boolean existsById(Long teamId);
 
     void delete(Team team);
+
+    List<Team> findAllByNameContainsOrDescriptionContains(String name, String description);
 }
