@@ -76,6 +76,27 @@ public class TaskService implements TaskServiceApi {
 
         Task task = findTaskById(taskId);
 
+        // 상태 순차 변경로직
+        TaskStatus currentStatus = task.getStatus();
+        TaskStatus newStatus = request.status();
+
+        // 상태 변화 없을 경우 바로 반환
+        if (currentStatus == newStatus) {
+            return TaskResponse.from(task);
+        }
+
+        boolean statusChangedCheck = false;
+
+        if (currentStatus == TaskStatus.TODO && newStatus == TaskStatus.IN_PROGRESS) {
+            statusChangedCheck = true;
+        } else if (currentStatus == TaskStatus.IN_PROGRESS && newStatus == TaskStatus.DONE) {
+            statusChangedCheck = true;
+        }
+
+        if (!statusChangedCheck) {
+            throw new CustomBusinessException(ErrorCode.INVALID_TASK_STATUS_CHANGE);
+        }
+
         task.updateStatus(request.status());
 
         return TaskResponse.from(task);

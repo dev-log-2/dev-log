@@ -34,6 +34,7 @@ public enum ErrorCode {
     TEAM_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 팀명입니다"),
 
     // --- Task Errors ---
+    INVALID_TASK_STATUS_CHANGE(HttpStatus.BAD_REQUEST, "상태는 TODO -> IN_PROGRESS -> DONE 순으로만 변경 가능합니다."),
     TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 태스크를 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
