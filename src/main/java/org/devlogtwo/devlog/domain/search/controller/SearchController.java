@@ -20,7 +20,7 @@ public class SearchController {
     private final SearchService searchService;
 
     @GetMapping
-    public ResponseEntity<GlobalApiResponse<SearchResponse>> searchAll(@RequestParam("q") String query) {
+    public ResponseEntity<GlobalApiResponse<SearchResponse>> searchAll(@RequestParam("query") String query) {
 
         SearchResponse response = searchService.searchAll(query);
         return ResponseHelper.success(SuccessCode.SEARCH_SUCCESS, response);

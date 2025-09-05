@@ -21,19 +21,19 @@ public class SearchService {
     private final TeamServiceApi teamServiceApi;
     private final TaskServiceApi taskServiceApi;
 
-    public SearchResponse searchAll(String keyword) {
+    public SearchResponse searchAll(String query) {
 
-        List<SearchTaskResponse> tasks = taskServiceApi.findAllByTitleContainsOrDescriptionContains(keyword, keyword)
+        List<SearchTaskResponse> tasks = taskServiceApi.findAllByTitleContainsOrDescriptionContains(query, query)
                 .stream()
                 .map(SearchTaskResponse::from)
                 .collect(Collectors.toList());
 
-        List<SearchTeamResponse> teams  = teamServiceApi.findAllByNameContainsOrDescriptionContains(keyword, keyword)
+        List<SearchTeamResponse> teams  = teamServiceApi.findAllByNameContainsOrDescriptionContains(query, query)
                 .stream()
                 .map(SearchTeamResponse::from)
                 .collect(Collectors.toList());
 
-        List<SearchUserResponse> users = userServiceApi.findAllByUsernameContainsOrNameContains(keyword, keyword)
+        List<SearchUserResponse> users = userServiceApi.findAllByUsernameContainsOrNameContains(query, query)
                 .stream()
                 .map(SearchUserResponse::from)
                 .collect(Collectors.toList());

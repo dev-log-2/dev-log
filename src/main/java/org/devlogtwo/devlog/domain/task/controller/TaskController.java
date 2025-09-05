@@ -61,7 +61,7 @@ public class TaskController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<GlobalApiResponse<TaskPageResponse>> searchTask(@RequestParam("q") String query, @PageableDefault(size = 0)
+    public ResponseEntity<GlobalApiResponse<TaskPageResponse>> searchTask(@RequestParam("query") String query, @PageableDefault(size = 0)
                                                                           Pageable pageable) {
 
         TaskPageResponse response = taskService.searchTask(query, pageable);
