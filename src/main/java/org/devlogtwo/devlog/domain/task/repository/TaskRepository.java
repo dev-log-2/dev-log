@@ -26,4 +26,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     long countByDueDateBeforeAndStatusNot(LocalDateTime dueDate, TaskStatus status);
 
     long countByAssigneeIdAndDueDateBetween(Long userId, LocalDateTime start, LocalDateTime end);
+
+    List<Task> findAllByAssignee(Long assigneeId);
 }

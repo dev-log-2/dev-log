@@ -190,4 +190,9 @@ public class TaskService implements TaskServiceApi {
 
         return taskRepository.countByAssigneeIdAndDueDateBetween(userId, start, end);
     }
+
+    @Override
+    public List<Task> findAllByAssignee(Long assigneeId) {
+        return taskRepository.findAllByAssignee(assigneeId);
+    }
 }
