@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum SuccessCode {
 
     // --- Common Success ---
+    REQUEST_SUCCESS(HttpStatus.OK, "요청이 성공적으로 처리되었습니다."),
 
     // --- Activity Log Success --
     ACTIVITY_LOG_SUCCESS(HttpStatus.OK, "활동 로그를 조회했습니다."),
@@ -52,7 +53,7 @@ public enum SuccessCode {
     //---Dashboard Success---
     DASHBOARD_STATS_FETCHED(HttpStatus.OK, "대시보드 통계 조회 완료"),
 
-    
+
     // --- Search Success ---
     SEARCH_SUCCESS(HttpStatus.OK, "검색이 완료되었습니다.");
 
