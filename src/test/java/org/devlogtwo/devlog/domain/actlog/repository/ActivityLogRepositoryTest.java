@@ -78,11 +78,7 @@ class ActivityLogRepositoryTest {
         // when
         Page<ActivityLog> resultPage = activityLogRepository.findAllByOrderByCreatedAtDesc(pageable);
         List<ActivityLog> logs = resultPage.getContent();
-        for (ActivityLog log : logs) {
-            System.out.println("log.getId() = " + log.getId());
-            System.out.println("log.getDescription() = " + log.getDescription());
-            System.out.println("log.getCreatedAt() = " + log.getCreatedAt());
-        }
+        // Debug print statements removed for clean test code.
 
         // then
         assertThat(resultPage).isNotNull();
