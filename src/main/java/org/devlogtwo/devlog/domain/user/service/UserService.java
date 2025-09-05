@@ -42,4 +42,10 @@ public class UserService implements UserServiceApi {
     public List<User> getAvailableUsersForTeam(Long teamId) {
         return userRepository.findAvailableUsersForTeam(teamId);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<User> findAllByUsernameContainsOrNameContains(String username, String name) {
+        return userRepository.findAllByUsernameContainsOrNameContains(username, name);
+    }
 }

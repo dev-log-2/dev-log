@@ -10,4 +10,6 @@ public interface UserServiceApi {
     User findUserByUsername(String username);
 
     List<User> getAvailableUsersForTeam(Long teamId);
+
+    List<User> findAllByUsernameContainsOrNameContains(String username, String name);
 }

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
+import java.util.List;
 import java.util.Optional;
 import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
@@ -69,5 +70,25 @@ class UserServiceTest {
         assertThatThrownBy(() -> userService.findUserById(nonExistentUserId))
                 .isInstanceOf(CustomBusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.USER_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("username 또는 name에 키워드가 포함된 사용자를 검색할 수 있다.")
+    void findAllByUsernameContainsOrNameContains() {
+        // given
+        String keyword = "test";
+        User user1 = User.signUp("testuser1", "개발자", "test1@example.com", "password", UserRole.USER);
+        User user2 = User.signUp("myuser", "테스트", "test2@example.com", "password", UserRole.USER);
+        List<User> expectedUsers = List.of(user1);
+
+        given(userRepository.findAllByUsernameContainsOrNameContains(keyword, keyword))
+                .willReturn(expectedUsers);
+
+        // when
+        List<User> actualUsers = userService.findAllByUsernameContainsOrNameContains(keyword, keyword);
+
+        // then
+        assertThat(actualUsers).hasSize(1);
+        assertThat(actualUsers).containsExactlyInAnyOrder(user1);
     }
 }
