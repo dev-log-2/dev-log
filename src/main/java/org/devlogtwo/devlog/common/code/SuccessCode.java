@@ -42,7 +42,10 @@ public enum SuccessCode {
     TEAM_AVAILABLE_MEMBER_LIST_SUCCESS(HttpStatus.OK, "사용 가능한 사용자 목록을 조회했습니다."),
 
     // --- Dashboard Success ---
-    DASHBOARD_TEAM_PROGRESS_SUCCESS(HttpStatus.OK, "팀 진행률 조회 완료");;
+    DASHBOARD_TEAM_PROGRESS_SUCCESS(HttpStatus.OK, "팀 진행률 조회 완료"),
+
+    // --- Search Success ---
+    SEARCH_SUCCESS(HttpStatus.OK, "검색이 완료되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

@@ -2,8 +2,10 @@ package org.devlogtwo.devlog.domain.task.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.devlogtwo.devlog.common.annotation.ActivityLogger;
 import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
+import org.devlogtwo.devlog.common.type.ActivityType;
 import org.devlogtwo.devlog.common.type.TaskStatus;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskCreateRequest;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskStatusUpdateRequest;
@@ -26,6 +28,7 @@ public class TaskService implements TaskServiceApi {
     private final TaskRepository taskRepository;
     private final UserServiceApi userServiceApi;
 
+    @ActivityLogger(type = ActivityType.TASK_CREATE)
     @Transactional
     public TaskResponse createTask(TaskCreateRequest request) {
 
@@ -67,10 +70,32 @@ public class TaskService implements TaskServiceApi {
     }
 
     // 태스크 상태 업데이트
+    @ActivityLogger(type = ActivityType.TASK_STATUS_CHANGE)
     @Transactional
     public TaskResponse updateTaskStatus(Long taskId, TaskStatusUpdateRequest request) {
 
         Task task = findTaskById(taskId);
+
+        // 상태 순차 변경로직
+        TaskStatus currentStatus = task.getStatus();
+        TaskStatus newStatus = request.status();
+
+        // 상태 변화 없을 경우 바로 반환
+        if (currentStatus == newStatus) {
+            return TaskResponse.from(task);
+        }
+
+        boolean statusChangedCheck = false;
+
+        if (currentStatus == TaskStatus.TODO && newStatus == TaskStatus.IN_PROGRESS) {
+            statusChangedCheck = true;
+        } else if (currentStatus == TaskStatus.IN_PROGRESS && newStatus == TaskStatus.DONE) {
+            statusChangedCheck = true;
+        }
+
+        if (!statusChangedCheck) {
+            throw new CustomBusinessException(ErrorCode.INVALID_TASK_STATUS_CHANGE);
+        }
 
         task.updateStatus(request.status());
 
@@ -78,6 +103,7 @@ public class TaskService implements TaskServiceApi {
     }
 
     // 태스크 수정
+    @ActivityLogger(type = ActivityType.TASK_UPDATE)
     @Transactional
     public TaskResponse updateTask(Long taskId, TaskUpdateRequest request) {
 
@@ -91,12 +117,24 @@ public class TaskService implements TaskServiceApi {
     }
 
     // 태스크 삭제
+    @ActivityLogger(type = ActivityType.TASK_DELETE)
     @Transactional
     public void deleteTask(Long taskId) {
 
         Task task = findTaskById(taskId);
 
         taskRepository.delete(task);
+    }
+
+    // 태스크 작업 검색 페이징 API
+    @Transactional(readOnly = true)
+    public TaskPageResponse searchTask(String query, Pageable pageable) {
+
+        Page<Task> taskPage = taskRepository.findByTitleContainsOrDescriptionContains(query, query, pageable);
+
+        Page<TaskResponse> responsePage = taskPage.map(TaskResponse::from);
+
+        return TaskPageResponse.from(responsePage);
     }
 
 
@@ -112,5 +150,19 @@ public class TaskService implements TaskServiceApi {
     public List<Task> findAllByTitleContainsOrDescriptionContains(String title, String description) {
 
         return taskRepository.findAllByTitleContainsOrDescriptionContains(title, description);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countByAssigneeAndStatus(User assignee, TaskStatus status) {
+
+        return taskRepository.countByAssigneeAndStatus(assignee, status);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countByAssignee(User assignee) {
+
+        return taskRepository.countByAssignee(assignee);
     }
 }
