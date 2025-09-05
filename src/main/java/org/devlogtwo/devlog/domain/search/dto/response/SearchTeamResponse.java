@@ -9,7 +9,8 @@ public record SearchTeamResponse(
 ) {
 
     public static SearchTeamResponse from(Team team) {
-        return new SearchTeamResponse(team.getId(),
+        return new SearchTeamResponse(
+                team.getId(),
                 team.getName(),
                 team.getDescription());
     }
