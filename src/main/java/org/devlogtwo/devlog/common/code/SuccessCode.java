@@ -47,6 +47,7 @@ public enum SuccessCode {
 
     // --- Dashboard Success ---
     DASHBOARD_TEAM_PROGRESS_SUCCESS(HttpStatus.OK, "팀 진행률 조회 완료"),
+    DASHBOARD_RECENT_ACTIVITY_SUCCESS(HttpStatus.OK, "활동 로그를 조회했습니다."),
 
     // --- Search Success ---
     SEARCH_SUCCESS(HttpStatus.OK, "검색이 완료되었습니다.");
