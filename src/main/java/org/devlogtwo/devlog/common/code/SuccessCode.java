@@ -39,7 +39,10 @@ public enum SuccessCode {
     TEAM_MEMBER_DELETE_SUCCESS(HttpStatus.OK, "팀 멤버가 성공적으로 제거되었습니다."),
     TEAM_UPDATE_SUCCESS(HttpStatus.OK, "요청 성공"),
     TEAM_MEMBER_LIST_SUCCESS(HttpStatus.OK, "팀 멤버 목록을 조회했습니다."),
-    TEAM_AVAILABLE_MEMBER_LIST_SUCCESS(HttpStatus.OK, "사용 가능한 사용자 목록을 조회했습니다.");
+    TEAM_AVAILABLE_MEMBER_LIST_SUCCESS(HttpStatus.OK, "사용 가능한 사용자 목록을 조회했습니다."),
+
+    // --- Search Success ---
+    SEARCH_SUCCESS(HttpStatus.OK, "검색이 완료되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
