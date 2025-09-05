@@ -28,7 +28,7 @@ public class TaskService implements TaskServiceApi {
     private final TaskRepository taskRepository;
     private final UserServiceApi userServiceApi;
 
-    @ActivityLogger(type = ActivityType.TASK_CREATE)
+    @ActivityLogger(type = ActivityType.TASK_CREATED)
     @Transactional
     public TaskResponse createTask(TaskCreateRequest request) {
 
@@ -70,7 +70,7 @@ public class TaskService implements TaskServiceApi {
     }
 
     // 태스크 상태 업데이트
-    @ActivityLogger(type = ActivityType.TASK_STATUS_CHANGE)
+    @ActivityLogger(type = ActivityType.TASK_STATUS_CHANGED)
     @Transactional
     public TaskResponse updateTaskStatus(Long taskId, TaskStatusUpdateRequest request) {
 
@@ -82,7 +82,7 @@ public class TaskService implements TaskServiceApi {
     }
 
     // 태스크 수정
-    @ActivityLogger(type = ActivityType.TASK_UPDATE)
+    @ActivityLogger(type = ActivityType.TASK_UPDATED)
     @Transactional
     public TaskResponse updateTask(Long taskId, TaskUpdateRequest request) {
 
@@ -96,7 +96,7 @@ public class TaskService implements TaskServiceApi {
     }
 
     // 태스크 삭제
-    @ActivityLogger(type = ActivityType.TASK_DELETE)
+    @ActivityLogger(type = ActivityType.TASK_DELETED)
     @Transactional
     public void deleteTask(Long taskId) {
 

@@ -34,7 +34,7 @@ public class CommentService implements CommentServiceApi {
     private final TaskServiceApi taskService;
 
 
-    @ActivityLogger(type = ActivityType.COMMENT_CREATE)
+    @ActivityLogger(type = ActivityType.COMMENT_CREATED)
     @Transactional
     public CommentResponse createComment(CommentCreateRequest request, Long taskId, Long userId) {
 
@@ -99,7 +99,7 @@ public class CommentService implements CommentServiceApi {
     }
 
 
-    @ActivityLogger(type = ActivityType.COMMENT_DELETE)
+    @ActivityLogger(type = ActivityType.COMMENT_DELETED)
     @Transactional
     public SuccessCode deleteComment(Long taskId, Long commentId, Long userid) {
         // 댓글조회 404에러
@@ -143,7 +143,7 @@ public class CommentService implements CommentServiceApi {
     }
 
     //댓글수정
-    @ActivityLogger(type = ActivityType.COMMENT_UPDATE)
+    @ActivityLogger(type = ActivityType.COMMENT_UPDATED)
     @Transactional
     public CommentResponse updateComment(
             Long userId,
