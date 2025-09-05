@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.annotation.ActivityLogger;
 import org.devlogtwo.devlog.common.code.ErrorCode;
+import org.devlogtwo.devlog.common.dto.PageResponse;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
 import org.devlogtwo.devlog.common.type.ActivityType;
 import org.devlogtwo.devlog.common.type.TaskStatus;
@@ -55,7 +56,7 @@ public class TaskService implements TaskServiceApi {
 
     // 태스크 목록 조회
     @Transactional(readOnly = true)
-    public TaskPageResponse getTaskList(TaskStatus status, Pageable pageable) {
+    public PageResponse<TaskResponse> getTaskList(TaskStatus status, Pageable pageable) {
 
         Page<Task> taskPage;
 
@@ -67,7 +68,7 @@ public class TaskService implements TaskServiceApi {
 
         Page<TaskResponse> responsePage = taskPage.map(TaskResponse::from);
 
-        return TaskPageResponse.from(responsePage);
+        return PageResponse.from(responsePage);
     }
 
     // 태스크 상태 업데이트
@@ -129,13 +130,13 @@ public class TaskService implements TaskServiceApi {
 
     // 태스크 작업 검색 페이징 API
     @Transactional(readOnly = true)
-    public TaskPageResponse searchTask(String query, Pageable pageable) {
+    public PageResponse<TaskResponse> searchTask(String query, Pageable pageable) {
 
         Page<Task> taskPage = taskRepository.findByTitleContainsOrDescriptionContains(query, query, pageable);
 
         Page<TaskResponse> responsePage = taskPage.map(TaskResponse::from);
 
-        return TaskPageResponse.from(responsePage);
+        return PageResponse.from(responsePage);
     }
 
 
