@@ -1,5 +1,6 @@
 package org.devlogtwo.devlog.domain.task.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.annotation.ActivityLogger;
@@ -164,5 +165,29 @@ public class TaskService implements TaskServiceApi {
     public long countByAssignee(User assignee) {
 
         return taskRepository.countByAssignee(assignee);
+    }
+
+    @Override
+    public long count() {
+
+        return taskRepository.count();
+    }
+
+    @Override
+    public long countByStatus(TaskStatus status) {
+
+        return taskRepository.countByStatus(status);
+    }
+
+    @Override
+    public long countByDueDateBeforeAndStatusNot(LocalDateTime dueDate, TaskStatus status) {
+
+        return taskRepository.countByDueDateBeforeAndStatusNot(dueDate, status);
+    }
+
+    @Override
+    public long countByAssigneeIdAndDueDateBetween(Long userId, LocalDateTime start, LocalDateTime end) {
+
+        return taskRepository.countByAssigneeIdAndDueDateBetween(userId, start, end);
     }
 }
