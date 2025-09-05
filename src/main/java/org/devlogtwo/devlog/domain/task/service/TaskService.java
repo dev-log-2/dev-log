@@ -106,4 +106,10 @@ public class TaskService implements TaskServiceApi {
         return taskRepository.findById(taskId)
                 .orElseThrow(() -> new CustomBusinessException(ErrorCode.TASK_NOT_FOUND));
     }
+
+    @Override
+    @Transactional
+    public List<Task> findAllByTitleContainsOrDescriptionContains(String title, String description) {
+        return taskRepository.findAllByTitleContainsOrDescriptionContains(title, description);
+    }
 }
