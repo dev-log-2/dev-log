@@ -108,7 +108,7 @@ public class TaskService implements TaskServiceApi {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Task> findAllByTitleContainsOrDescriptionContains(String title, String description) {
 
         return taskRepository.findAllByTitleContainsOrDescriptionContains(title, description);
