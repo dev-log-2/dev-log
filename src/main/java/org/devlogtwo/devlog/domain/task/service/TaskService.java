@@ -151,4 +151,18 @@ public class TaskService implements TaskServiceApi {
 
         return taskRepository.findAllByTitleContainsOrDescriptionContains(title, description);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countByAssigneeAndStatus(User assignee, TaskStatus status) {
+
+        return taskRepository.countByAssigneeAndStatus(assignee, status);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countByAssignee(User assignee) {
+
+        return taskRepository.countByAssignee(assignee);
+    }
 }
