@@ -12,11 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserService implements UserServiceApi {
 
     private final UserRepository userRepository;
 
-    @Transactional(readOnly = true)
     public UserDetailsResponse getUserDetails(Long id) {
 
         User user = findUserById(id);
@@ -24,28 +24,46 @@ public class UserService implements UserServiceApi {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomBusinessException(ErrorCode.USER_NOT_FOUND));
     }
 
     @Override
-    @Transactional(readOnly = true)
     public User findUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomBusinessException(ErrorCode.USER_NOT_FOUND));
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<User> getAvailableUsersForTeam(Long teamId) {
         return userRepository.findAvailableUsersForTeam(teamId);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<User> findAllByUsernameContainsOrNameContains(String username, String name) {
         return userRepository.findAllByUsernameContainsOrNameContains(username, name);
+    }
+
+    @Override
+    public boolean isUsernameTaken(String username) {
+        return userRepository.existsByUsernameIgnoringSoftDelete(username) > 0;
+    }
+
+    @Override
+    public boolean isEmailTaken(String email) {
+        return userRepository.existsByEmailIgnoringSoftDelete(email) > 0;
+    }
+
+    @Override
+    @Transactional
+    public User registerNewUser(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void deleteUser(User user) {
+        userRepository.delete(user);
     }
 }

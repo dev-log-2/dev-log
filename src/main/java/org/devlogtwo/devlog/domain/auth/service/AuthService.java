@@ -12,8 +12,7 @@ import org.devlogtwo.devlog.domain.auth.dto.request.AuthWithdrawRequest;
 import org.devlogtwo.devlog.domain.auth.dto.response.AuthLoginResponse;
 import org.devlogtwo.devlog.domain.auth.dto.response.AuthRegisterResponse;
 import org.devlogtwo.devlog.domain.user.entity.User;
-import org.devlogtwo.devlog.domain.user.repository.UserRepository;
-import org.devlogtwo.devlog.domain.user.service.UserService;
+import org.devlogtwo.devlog.domain.user.service.UserServiceApi;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,20 +20,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserService userService;
-    private final UserRepository userRepository;
+    private final UserServiceApi userService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
     public AuthRegisterResponse signUp(AuthRegisterRequest authRegisterRequest) {
 
-        // username 중복 검증 -> soft delete 된 계정의 email도 사용하지 못 하도록 native query 사용
-        if (userRepository.existsByUsernameIgnoringSoftDelete(authRegisterRequest.username()) > 0) {
+        if (userService.isUsernameTaken(authRegisterRequest.username())) {
             throw new CustomBusinessException(ErrorCode.DUPLICATE_USERNAME);
         }
 
-        // email 중복 검증 -> soft delete 된 계정의 email도 사용하지 못 하도록 native query 사용
-        if (userRepository.existsByEmailIgnoringSoftDelete(authRegisterRequest.email()) > 0) {
+        if (userService.isEmailTaken(authRegisterRequest.email())) {
             throw new CustomBusinessException(ErrorCode.DUPLICATE_EMAIL);
         }
 
@@ -42,34 +38,30 @@ public class AuthService {
         User newUser = User.signUp(authRegisterRequest.username(), authRegisterRequest.name(),
                 authRegisterRequest.email(), encodedPassword, UserRole.USER);
 
-        User savedUser = userRepository.save(newUser);
+        User savedUser = userService.registerNewUser(newUser);
 
         return AuthRegisterResponse.from(savedUser);
     }
 
     public AuthLoginResponse login(AuthLoginRequest authLoginRequest) {
 
-        // username에 의한 user 존재 여부 검증
         User user = userService.findUserByUsername(authLoginRequest.username());
 
-        // password 일치 여부 검증
         if (!passwordEncoder.matches(authLoginRequest.password(), user.getPassword())) {
             throw new CustomBusinessException(ErrorCode.INVALID_CREDENTIALS);
         }
 
-        // token 생성
         String token = jwtTokenProvider.createToken(user.getUsername());
         return AuthLoginResponse.from(token);
     }
 
     public void withdraw(@Valid AuthWithdrawRequest authWithdrawRequest, Long userId) {
 
-        // 인증된 유저의 비밀번호와 입력된 비밀번호 다시 확인
         User user = userService.findUserById(userId);
         if (!passwordEncoder.matches(authWithdrawRequest.password(), user.getPassword())) {
             throw new CustomBusinessException(ErrorCode.PASSWORD_CONFIRM_MISMATCH);
         }
 
-        userRepository.delete(user);
+        userService.deleteUser(user);
     }
 }
