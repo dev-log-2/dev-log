@@ -29,6 +29,7 @@ public enum SuccessCode {
     COMMENT_LIST_VIEWED(HttpStatus.OK, "댓글 목록을 조회했습니다."),
     COMMENT_DELETED_SINGLE(HttpStatus.OK, "댓글이 삭제되었습니다."),
     COMMENT_DELETED_WITH_REPLIES(HttpStatus.OK, "댓글과 대댓글들이 삭제되었습니다."),
+    COMMENT_UPDATED(HttpStatus.OK, "댓글이 수정되었습니다."),
     // --- Team Success ---
     TEAM_CREATE_SUCCESS(HttpStatus.CREATED, "팀이 성공적으로 생성되었습니다."),
     TEAM_DETAIL_SUCCESS(HttpStatus.OK, "팀 정보를 조회했습니다."),
