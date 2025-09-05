@@ -14,6 +14,7 @@ import org.devlogtwo.devlog.domain.task.dto.response.TaskPageResponse;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskResponse;
 import org.devlogtwo.devlog.domain.task.service.TaskService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,6 +58,15 @@ public class TaskController {
         TaskPageResponse response = taskService.getTaskList(status, pageable);
 
         return ResponseHelper.success(SuccessCode.GET_TASKS_SUCCESS, response);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<GlobalApiResponse<TaskPageResponse>> searchTask(@RequestParam("q") String query, @PageableDefault(size = 0)
+                                                                          Pageable pageable) {
+
+        TaskPageResponse response = taskService.searchTask(query, pageable);
+
+        return ResponseHelper.success(SuccessCode.SEARCH_SUCCESS, response);
     }
 
     @PatchMapping("/{taskId}/status")

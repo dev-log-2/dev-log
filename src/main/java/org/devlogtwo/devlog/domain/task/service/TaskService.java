@@ -99,6 +99,17 @@ public class TaskService implements TaskServiceApi {
         taskRepository.delete(task);
     }
 
+    // 태스크 작업 검색 페이징 API
+    @Transactional(readOnly = true)
+    public TaskPageResponse searchTask(String query, Pageable pageable) {
+
+        Page<Task> taskPage = taskRepository.findByTitleContainsOrDescriptionContains(query, query, pageable);
+
+        Page<TaskResponse> responsePage = taskPage.map(TaskResponse::from);
+
+        return TaskPageResponse.from(responsePage);
+    }
+
 
     @Override
     public Task findTaskById(Long taskId) {

@@ -12,4 +12,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     Page<Task> findByStatus(TaskStatus status, Pageable pageable);
 
     List<Task> findAllByTitleContainsOrDescriptionContains(String title, String description);
+
+    Page<Task> findByTitleContainsOrDescriptionContains(String title, String description, Pageable pageable);
 }
