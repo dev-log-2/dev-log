@@ -13,4 +13,6 @@ public interface TeamMemberServiceApi {
     void deleteByTeamId(Long teamId);
 
     void deleteByTeamIdAndUserId(Long teamId, Long userId);
+
+    List<TeamMember> findAll();
 }
