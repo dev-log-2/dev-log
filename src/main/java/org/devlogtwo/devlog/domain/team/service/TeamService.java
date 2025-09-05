@@ -50,5 +50,9 @@ public class TeamService implements TeamServiceApi {
         teamRepository.delete(team);
     }
 
+    @Override
+    public List<Team> findAllByNameContainsOrDescriptionContains(String name, String description) {
+        return teamRepository.findAllByNameContainsOrDescriptionContains(name, description);
+    }
 
 }
