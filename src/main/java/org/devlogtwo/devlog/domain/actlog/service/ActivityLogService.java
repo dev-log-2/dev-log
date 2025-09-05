@@ -2,6 +2,7 @@ package org.devlogtwo.devlog.domain.actlog.service;
 
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import org.devlogtwo.devlog.common.dto.PageResponse;
 import org.devlogtwo.devlog.common.type.ActivityType;
 import org.devlogtwo.devlog.domain.actlog.dto.response.ActivityLogResponse;
 import org.devlogtwo.devlog.domain.actlog.entity.ActivityLog;
@@ -28,27 +29,16 @@ public class ActivityLogService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ActivityLogResponse> getActivityLogs(ActivityType type, Long userId, Long taskId,
-                                                     LocalDate startDate, LocalDate endDate,
-                                                     Pageable pageable) {
+    public PageResponse<ActivityLogResponse> getActivityLogs(ActivityType type, Long userId, Long taskId,
+                                                             LocalDate startDate, LocalDate endDate,
+                                                             Pageable pageable) {
 
-        Specification<ActivityLog> spec = Specification.unrestricted();
+        Specification<ActivityLog> spec = ActivityLogSpecs
+                .buildSpec(type, userId, taskId, startDate, endDate);
 
-        if (type != null) {
-            spec = spec.and(ActivityLogSpecs.withType(type));
-        }
-
-        if (userId != null) {
-            spec = spec.and(ActivityLogSpecs.withUserId(userId));
-        }
-        if (taskId != null) {
-            spec = spec.and(ActivityLogSpecs.withTaskId(taskId));
-        }
-        if (startDate != null && endDate != null) {
-            spec = spec.and(ActivityLogSpecs.withDateBetween(startDate, endDate));
-        }
-
-        return activityLogRepository.findAll(spec, pageable)
+        Page<ActivityLogResponse> pages = activityLogRepository.findAll(spec, pageable)
                 .map(ActivityLogResponse::from);
+
+        return PageResponse.from(pages);
     }
 }
