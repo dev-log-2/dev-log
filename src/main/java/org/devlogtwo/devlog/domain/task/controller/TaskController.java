@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.code.SuccessCode;
 import org.devlogtwo.devlog.common.dto.GlobalApiResponse;
+import org.devlogtwo.devlog.common.dto.PageResponse;
 import org.devlogtwo.devlog.common.type.TaskStatus;
 import org.devlogtwo.devlog.common.util.ResponseHelper;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskCreateRequest;
@@ -13,6 +14,7 @@ import org.devlogtwo.devlog.domain.task.dto.request.TaskUpdateRequest;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskPageResponse;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskResponse;
 import org.devlogtwo.devlog.domain.task.service.TaskService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -52,19 +54,19 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<GlobalApiResponse<TaskPageResponse>> getTaskList(
+    public ResponseEntity<GlobalApiResponse<PageResponse<TaskResponse>>> getTaskList(
             @RequestParam(required = false) TaskStatus status, Pageable pageable) {
 
-        TaskPageResponse response = taskService.getTaskList(status, pageable);
+        PageResponse<TaskResponse> response = taskService.getTaskList(status, pageable);
 
         return ResponseHelper.success(SuccessCode.GET_TASKS_SUCCESS, response);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<GlobalApiResponse<TaskPageResponse>> searchTask(@RequestParam("query") String query, @PageableDefault(size = 10)
+    public ResponseEntity<GlobalApiResponse<PageResponse<TaskResponse>>> searchTask(@RequestParam("query") String query, @PageableDefault(size = 10)
                                                                           Pageable pageable) {
 
-        TaskPageResponse response = taskService.searchTask(query, pageable);
+        PageResponse<TaskResponse> response = taskService.searchTask(query, pageable);
 
         return ResponseHelper.success(SuccessCode.SEARCH_SUCCESS, response);
     }
