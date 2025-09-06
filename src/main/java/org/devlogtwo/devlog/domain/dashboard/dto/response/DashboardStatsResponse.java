@@ -8,7 +8,7 @@ package org.devlogtwo.devlog.domain.dashboard.dto.response;
  * @param overdueTasks    마감일 지난 미완료 Task 개수
  * @param teamProgress    팀 전체 진행률
  * @param myTasksToday    오늘 내가 처리해야 할 Task 개수
- * @Param completionRate  팀 완성률
+ * @param completionRate  팀 완성률
  */
 
 public record DashboardStatsResponse(long totalTasks, long completedTasks, long inProgressTasks, long todoTasks,
