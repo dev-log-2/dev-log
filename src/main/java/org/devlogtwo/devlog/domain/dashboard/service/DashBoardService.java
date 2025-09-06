@@ -37,7 +37,6 @@ public class DashBoardService {
     private final ActivityLogServiceApi activityLogServiceApi;
 
     //대시보드 통계 조회
-
     public DashboardStatsResponse getStats(Long id) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime todayStart = now.toLocalDate().atStartOfDay();
@@ -56,8 +55,8 @@ public class DashBoardService {
         //완료율(팀에 소속된 사림들이 완료한 작업 수/ 팀에 소속된 사람들이 맡은 전체 작업 수)*100
         long completionRate = (totalTasks > 0) ? (completedTasks * 100 / totalTasks) : 0;
 
-        // 팀 전체 진행률(완료된 작업수/ 전체 작업 수)*100
-        long teamProgress = completionRate;
+        // 진행률 = (완료된 작업+진행중 작업*0.3 )/전체 작업 * 100
+        long teamProgress = (totalTasks > 0) ? (long) ((completedTasks + inProgressTasks * 0.3) * 100 / totalTasks) : 0;
 
         return DashboardStatsResponse.of(
                 totalTasks,
@@ -70,7 +69,6 @@ public class DashBoardService {
                 completionRate
         );
     }
-
 
     public MyTasksSummaryResponse getMyTasks(Long userId) {
         LocalDate Today = LocalDate.now();
@@ -102,7 +100,7 @@ public class DashBoardService {
 
         Map<Long, List<TeamMember>> membersByTeamId = teamMembers.stream()
                 .collect(Collectors.groupingBy(
-                        teamMember -> teamMember.getTeam().getId()    // 팀 ID로 그룹핑
+                        teamMember -> teamMember.getTeam().getId()
                 ));
 
         Map<String, Integer> progressByTeam = new HashMap<>();

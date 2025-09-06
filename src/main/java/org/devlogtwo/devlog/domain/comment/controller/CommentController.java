@@ -39,9 +39,9 @@ public class CommentController {
     public ResponseEntity<GlobalApiResponse<CommentResponse>> createComment(
             @PathVariable Long taskId,
             @Valid @RequestBody CommentCreateRequest request,
-            @AuthenticationPrincipal UserPrincipal AushUser
+            @AuthenticationPrincipal UserPrincipal aushUser
     ) {
-        CommentResponse response = commentService.createComment(request, taskId, AushUser.id());
+        CommentResponse response = commentService.createComment(request, taskId, aushUser.id());
 
         return ResponseHelper.success(SuccessCode.COMMENT_CREATED, response);
     }

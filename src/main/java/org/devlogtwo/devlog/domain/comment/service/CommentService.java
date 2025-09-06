@@ -41,7 +41,6 @@ public class CommentService implements CommentServiceApi {
         User user = userService.findUserById(userId);
         Task task = taskService.findTaskById(taskId);
 
-        // 삼항연산자 어때? 리펙토링 해야겠지?
         Comment parent = null;
         if (request.getParentId() != null) {
             parent = commentRepository.findById(request.getParentId())
@@ -62,7 +61,6 @@ public class CommentService implements CommentServiceApi {
         return CommentResponse.from(savedComment);
     }
 
-
     @Transactional(readOnly = true)
     public CommentPageResponse getComments(Long taskId, Pageable pageable) {
         taskService.findTaskById(taskId);
@@ -73,11 +71,11 @@ public class CommentService implements CommentServiceApi {
         //자식 댓글들을 쿼리를 쏴서 조회
         List<Comment> children = commentRepository.findByParentInOrderByCreatedAtAsc(parents);
 
-        // 3. 자식 댓글들을 부모 ID별로 그룹화
+        //자식 댓글들을 부모 ID 별로 그룹화
         Map<Long, List<Comment>> childrenMap = children.stream()
                 .collect(Collectors.groupingBy(comment -> comment.getParent().getId()));
 
-        // 4. 응답 리스트 부모에서 자식 순서로
+        // 응답 리스트 부모에서 자식 순서로
         List<CommentResponse> finalCommentList = new ArrayList<>();
         for (Comment parent : parents) {
             // 부모 댓글 DTO로 변환 후 추가
@@ -86,9 +84,9 @@ public class CommentService implements CommentServiceApi {
             List<Comment> replies = childrenMap.getOrDefault(parent.getId(), List.of());
             replies.forEach(reply -> finalCommentList.add(CommentResponse.from(reply)));
         }
-        //리팩토링 가능
+
         //출력
-        //부모와 자식을 합쳐서 반환하기 떄문에 정적매소드 팩토리를 안씀
+        //부모와 자식을 합쳐서 반환하기 때문에 정적메소드 팩토리를 안씀
         return new CommentPageResponse(
                 finalCommentList,// 합치는 부분
                 parentPage.getTotalElements(),
@@ -103,8 +101,7 @@ public class CommentService implements CommentServiceApi {
     @Transactional
     public SuccessCode deleteComment(Long taskId, Long commentId, Long userid) {
         // 댓글조회 404에러
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomBusinessException(ErrorCode.COMMENT_NOT_FOUND));
+        Comment comment = findCommentById(commentId);
 
         // 권한확인
         if (!comment.getUser().getId().equals(userid)) {
@@ -151,8 +148,7 @@ public class CommentService implements CommentServiceApi {
             Long commentId,
             CommentUpdateRequest request
     ) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomBusinessException(ErrorCode.COMMENT_NOT_FOUND));
+        Comment comment = findCommentById(commentId);
         // 권한확인
         if (!comment.getUser().getId().equals(userId)) {
             throw new CustomBusinessException(ErrorCode.COMMENT_NO_PERMISSION);
@@ -166,5 +162,8 @@ public class CommentService implements CommentServiceApi {
         return CommentResponse.from(comment);
     }
 
-
+    private Comment findCommentById(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomBusinessException(ErrorCode.COMMENT_NOT_FOUND));
+    }
 }
