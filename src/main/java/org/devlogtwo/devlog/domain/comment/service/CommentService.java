@@ -86,7 +86,7 @@ public class CommentService implements CommentServiceApi {
         }
 
         //출력
-        //부모와 자식을 합쳐서 반환하기 떄문에 정적매소드 팩토리를 안씀
+        //부모와 자식을 합쳐서 반환하기 때문에 정적메소드 팩토리를 안씀
         return new CommentPageResponse(
                 finalCommentList,// 합치는 부분
                 parentPage.getTotalElements(),
