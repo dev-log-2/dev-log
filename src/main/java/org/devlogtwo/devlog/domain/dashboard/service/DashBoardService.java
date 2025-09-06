@@ -56,7 +56,6 @@ public class DashBoardService {
         long completionRate = (totalTasks > 0) ? (completedTasks * 100 / totalTasks) : 0;
 
         // 진행률 = (완료된 작업+진행중 작업*0.3 )/전체 작업 * 100
-        // 진행률
         long teamProgress = (totalTasks > 0) ? (long) ((completedTasks + inProgressTasks * 0.3) * 100 / totalTasks) : 0;
 
         return DashboardStatsResponse.of(
