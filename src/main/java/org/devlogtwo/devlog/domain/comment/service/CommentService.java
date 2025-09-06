@@ -103,8 +103,7 @@ public class CommentService implements CommentServiceApi {
     @Transactional
     public SuccessCode deleteComment(Long taskId, Long commentId, Long userid) {
         // 댓글조회 404에러
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomBusinessException(ErrorCode.COMMENT_NOT_FOUND));
+        Comment comment = findCommentById(commentId);
 
         // 권한확인
         if (!comment.getUser().getId().equals(userid)) {
@@ -151,8 +150,7 @@ public class CommentService implements CommentServiceApi {
             Long commentId,
             CommentUpdateRequest request
     ) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomBusinessException(ErrorCode.COMMENT_NOT_FOUND));
+        Comment comment = findCommentById(commentId);
         // 권한확인
         if (!comment.getUser().getId().equals(userId)) {
             throw new CustomBusinessException(ErrorCode.COMMENT_NO_PERMISSION);
@@ -166,5 +164,8 @@ public class CommentService implements CommentServiceApi {
         return CommentResponse.from(comment);
     }
 
-
+    private Comment findCommentById(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomBusinessException(ErrorCode.COMMENT_NOT_FOUND));
+    }
 }
