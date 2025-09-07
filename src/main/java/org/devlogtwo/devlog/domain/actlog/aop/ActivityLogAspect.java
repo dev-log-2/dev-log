@@ -15,8 +15,6 @@ import org.devlogtwo.devlog.domain.comment.dto.response.CommentResponse;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskResponse;
 import org.devlogtwo.devlog.domain.task.entity.Task;
 import org.devlogtwo.devlog.domain.task.service.TaskService;
-import org.devlogtwo.devlog.domain.user.entity.User;
-import org.devlogtwo.devlog.domain.user.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -28,8 +26,7 @@ import org.springframework.stereotype.Component;
 public class ActivityLogAspect {
 
     private final ActivityLogService activityLogService;
-    private final UserService userService; // User 엔티티 조회용
-    private final TaskService taskService; // Task의 변경 전 상태 조회용
+    private final TaskService taskService; // Task의 변경 전 상태 조회를 위해 필요
 
     @Pointcut("@annotation(activityLogger)")
     public void activityLogPointcut(ActivityLogger activityLogger) {
@@ -38,13 +35,13 @@ public class ActivityLogAspect {
     @Around("activityLogPointcut(activityLogger)")
     public Object logActivity(ProceedingJoinPoint joinPoint, ActivityLogger activityLogger) throws Throwable {
 
-        User currentUser = getCurrentUser();
-        if (currentUser == null) {
-            log.warn("로그를 기록할 사용자 정보를 찾을 수 없어, 대상 메소드만 실행합니다.");
+        UserPrincipal currentUserPrincipal = getCurrentUserPrincipal();
+        if (currentUserPrincipal == null) {
+            log.warn("[ActivityLogAspect] 로그를 기록할 사용자 정보를 찾을 수 없어, 대상 메소드만 실행합니다.");
             return joinPoint.proceed();
         }
 
-        // TASK_STATUS_CHANGE 경우에만 사용
+        // Type이 TASK_STATUS_CHANGE 경우에만 사용
         String beforeState = getBeforeState(activityLogger.type(), joinPoint);
 
         Object result = joinPoint.proceed();
@@ -54,28 +51,28 @@ public class ActivityLogAspect {
             Long commentId = extractId(joinPoint, result, "commentId");
             String description = createLogDescription(activityLogger.type(), result, beforeState);
 
-            activityLogService.saveLog(currentUser, activityLogger.type(), taskId, commentId, description);
+            activityLogService.saveLog(currentUserPrincipal.id(), activityLogger.type(), taskId, commentId,
+                    description);
+
             log.info("[ActivityLogAspect]: Success - [User: {}] [Type: {}] [Description: {}]",
-                    currentUser.getUsername(),
+                    currentUserPrincipal.username(),
                     activityLogger.type().name(), description);
 
         } catch (Exception e) {
-            // 로깅으로 인해 종료되지 않도록 예외를 새로 던지지는 않음
+            // 로깅으로 인해 대상 메서드가 종료되지 않도록 예외를 새로 던지지는 않음
             log.error("[ActivityLogAspect]", e);
         }
 
         return result;
     }
 
-    // TODO: 매 번 조회하고 있어 더 좋은 방법이 있나 고민 필요
-    // 여기서 조회를 안 하고 userId만 넘기면 결국 서비스에서 어차피 하게 됨 위치가 어디가 나은지?
-    private User getCurrentUser() {
-
+    // User 엔티티를 매 번 조회하는 대신 UserPrincipal을 사용하여 db 조회가 이뤄지지 않도록 개선
+    private UserPrincipal getCurrentUserPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal principal)) {
-            return null;
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal principal) {
+            return principal;
         }
-        return userService.findUserById(principal.id());
+        return null;
     }
 
     private String getBeforeState(ActivityType type, ProceedingJoinPoint joinPoint) {
@@ -86,7 +83,7 @@ public class ActivityLogAspect {
 
         Long taskId = findArgumentByName(joinPoint, "taskId", Long.class);
 
-        // 결국 이전 상태를 알기 위해서는 조회를 해와야함..
+        // 결국 이전 상태를 알기 위해서는 조회 필요
         if (taskId != null) {
             Task task = taskService.findTaskById(taskId);
             return task.getStatus().name();

@@ -11,6 +11,7 @@ import org.devlogtwo.devlog.domain.actlog.entity.ActivityLog;
 import org.devlogtwo.devlog.domain.actlog.repository.ActivityLogRepository;
 import org.devlogtwo.devlog.domain.actlog.specs.ActivityLogSpecs;
 import org.devlogtwo.devlog.domain.user.entity.User;
+import org.devlogtwo.devlog.domain.user.service.UserServiceApi;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,11 +23,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class ActivityLogService implements ActivityLogServiceApi {
 
     private final ActivityLogRepository activityLogRepository;
+    private final UserServiceApi userService;
 
     @Transactional
-    public void saveLog(User currentUser, ActivityType type, Long taskId, Long commentId, String description) {
+    public void saveLog(Long userId, ActivityType type, Long taskId, Long commentId, String description) {
 
-        ActivityLog newActivityLog = ActivityLog.create(currentUser, type, taskId, commentId, description);
+        User userProxy = userService.getReferenceById(userId);
+        ActivityLog newActivityLog = ActivityLog.create(userProxy, type, taskId, commentId, description);
         activityLogRepository.save(newActivityLog);
     }
 
