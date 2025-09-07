@@ -1,6 +1,7 @@
 package org.devlogtwo.devlog.common.security;
 
 import lombok.RequiredArgsConstructor;
+import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.domain.user.entity.User;
 import org.devlogtwo.devlog.domain.user.service.UserServiceApi;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +19,8 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.findUserByUsername(username);
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage(username)));
 
         return JwtUserDetails.builder()
                 .user(user)

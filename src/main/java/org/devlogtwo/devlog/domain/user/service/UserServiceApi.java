@@ -1,6 +1,7 @@
 package org.devlogtwo.devlog.domain.user.service;
 
 import java.util.List;
+import java.util.Optional;
 import org.devlogtwo.devlog.domain.user.entity.User;
 
 public interface UserServiceApi {
@@ -20,4 +21,6 @@ public interface UserServiceApi {
     User registerNewUser(User user);
 
     void deleteUser(User user);
+
+    Optional<User> findByUsername(String username);
 }
