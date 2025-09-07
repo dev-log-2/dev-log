@@ -114,7 +114,7 @@ public class TeamMemberServiceTest {
     }
 
     @Test
-    public void 팀에_추가_가능한_맴버조회() {
+    public void 팀에_추가_가능한_멤버조회() {
         //given
         Long teamId = 1L;
         List<User> availableUsers = Arrays.asList(
