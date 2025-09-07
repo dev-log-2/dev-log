@@ -3,7 +3,9 @@ package org.devlogtwo.devlog.domain.actlog.service;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.dto.PageResponse;
+import org.devlogtwo.devlog.common.security.UserPrincipal;
 import org.devlogtwo.devlog.common.type.ActivityType;
+import org.devlogtwo.devlog.common.type.UserRole;
 import org.devlogtwo.devlog.domain.actlog.dto.response.ActivityLogResponse;
 import org.devlogtwo.devlog.domain.actlog.entity.ActivityLog;
 import org.devlogtwo.devlog.domain.actlog.repository.ActivityLogRepository;
@@ -29,12 +31,18 @@ public class ActivityLogService implements ActivityLogServiceApi {
     }
 
     @Transactional(readOnly = true)
-    public PageResponse<ActivityLogResponse> getActivityLogs(ActivityType type, Long userId, Long taskId,
+    public PageResponse<ActivityLogResponse> getActivityLogs(UserPrincipal principal, ActivityType type, Long userId,
+                                                             Long taskId,
                                                              LocalDate startDate, LocalDate endDate,
                                                              Pageable pageable) {
 
+        Long targetUserId = userId; // 권한이 ADMIN인 경우는 필터링 조건인 userId가 null이면 모두 조회, NULL이 아니면 userId 조회
+        if (principal.role() == UserRole.USER) { // 권한이 USER인 경우는 자기 내용만 조회하도록 강제
+            targetUserId = principal.id();
+        }
+
         Specification<ActivityLog> spec = ActivityLogSpecs
-                .buildSpec(type, userId, taskId, startDate, endDate);
+                .buildSpec(type, targetUserId, taskId, startDate, endDate);
 
         Page<ActivityLogResponse> pages = activityLogRepository.findAll(spec, pageable)
                 .map(ActivityLogResponse::from);

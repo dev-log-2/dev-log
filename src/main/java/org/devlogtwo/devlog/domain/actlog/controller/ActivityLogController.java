@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.code.SuccessCode;
 import org.devlogtwo.devlog.common.dto.GlobalApiResponse;
 import org.devlogtwo.devlog.common.dto.PageResponse;
+import org.devlogtwo.devlog.common.security.UserPrincipal;
 import org.devlogtwo.devlog.common.type.ActivityType;
 import org.devlogtwo.devlog.common.util.ResponseHelper;
 import org.devlogtwo.devlog.domain.actlog.dto.response.ActivityLogResponse;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +28,7 @@ public class ActivityLogController {
 
     @GetMapping("/api/activities")
     public ResponseEntity<GlobalApiResponse<PageResponse<ActivityLogResponse>>> getActivities(
+            @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(required = false) ActivityType type,
             @RequestParam(required = false) Long userId,
             @RequestParam(required = false) Long taskId,
@@ -34,7 +37,7 @@ public class ActivityLogController {
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable) {
 
-        PageResponse<ActivityLogResponse> logPage = activityLogService.getActivityLogs(type, userId, taskId,
+        PageResponse<ActivityLogResponse> logPage = activityLogService.getActivityLogs(principal, type, userId, taskId,
                 startDate, endDate, pageable);
         return ResponseHelper.success(SuccessCode.ACTIVITY_LOG_SUCCESS, logPage);
     }
