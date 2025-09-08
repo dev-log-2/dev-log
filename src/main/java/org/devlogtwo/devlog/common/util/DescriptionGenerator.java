@@ -2,6 +2,7 @@ package org.devlogtwo.devlog.common.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.devlogtwo.devlog.common.type.ActivityType;
 import org.devlogtwo.devlog.domain.actlog.entity.ActivityLog;
@@ -9,11 +10,12 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class DescriptionGenerator {
 
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
-    public static String createDescription(ActivityLog activityLog) {
+    public String createDescription(ActivityLog activityLog) {
         ActivityType type = activityLog.getType();
         String resultJson = activityLog.getResult();
 
@@ -27,7 +29,7 @@ public class DescriptionGenerator {
                 return getDefaultDescription(activityLog);
             }
 
-            JsonNode resultNode = mapper.readTree(resultJson);
+            JsonNode resultNode = objectMapper.readTree(resultJson);
 
             return switch (type) {
                 case TASK_CREATED -> {
@@ -51,7 +53,7 @@ public class DescriptionGenerator {
         }
     }
 
-    private static String getDefaultDescription(ActivityLog activityLog) {
+    private String getDefaultDescription(ActivityLog activityLog) {
         return switch (activityLog.getType()) {
             case TASK_DELETED -> "작업을 삭제했습니다.";
             case COMMENT_DELETED -> "댓글을 삭제했습니다.";

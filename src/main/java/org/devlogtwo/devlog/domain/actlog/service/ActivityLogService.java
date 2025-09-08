@@ -6,6 +6,7 @@ import org.devlogtwo.devlog.common.dto.PageResponse;
 import org.devlogtwo.devlog.common.security.UserPrincipal;
 import org.devlogtwo.devlog.common.type.ActivityType;
 import org.devlogtwo.devlog.common.type.UserRole;
+import org.devlogtwo.devlog.common.util.DescriptionGenerator;
 import org.devlogtwo.devlog.domain.actlog.dto.response.ActivityLogResponse;
 import org.devlogtwo.devlog.domain.actlog.entity.ActivityLog;
 import org.devlogtwo.devlog.domain.actlog.repository.ActivityLogRepository;
@@ -24,6 +25,7 @@ public class ActivityLogService implements ActivityLogServiceApi {
 
     private final ActivityLogRepository activityLogRepository;
     private final UserServiceApi userService;
+    private final DescriptionGenerator descriptionGenerator;
 
     @Transactional
     public void saveLog(Long userId, ActivityType type, String methodName, String parameters, boolean success,
@@ -50,7 +52,8 @@ public class ActivityLogService implements ActivityLogServiceApi {
                 .buildSpec(type, targetUserId, taskId, startDate, endDate);
 
         Page<ActivityLogResponse> pages = activityLogRepository.findAll(spec, pageable)
-                .map(ActivityLogResponse::from);
+                .map(activityLog -> ActivityLogResponse.of(activityLog,
+                        descriptionGenerator.createDescription(activityLog)));
 
         return PageResponse.from(pages);
     }

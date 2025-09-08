@@ -2,7 +2,6 @@ package org.devlogtwo.devlog.domain.dashboard.dto.response;
 
 import java.time.LocalDateTime;
 import org.devlogtwo.devlog.common.type.ActivityType;
-import org.devlogtwo.devlog.common.util.DescriptionGenerator;
 import org.devlogtwo.devlog.domain.actlog.entity.ActivityLog;
 import org.devlogtwo.devlog.domain.user.entity.User;
 
@@ -16,7 +15,7 @@ public record DashboardRecentActivityResponse(
         String description,
         LocalDateTime createdAt
 ) {
-    public static DashboardRecentActivityResponse from(ActivityLog activityLog) {
+    public static DashboardRecentActivityResponse of(ActivityLog activityLog, String description) {
 
         String targetType;
         ActivityType activityType = activityLog.getType();
@@ -31,7 +30,7 @@ public record DashboardRecentActivityResponse(
                 activityLog.getId(), activityLog.getUser() != null ? activityLog.getUser().getId() : null,
                 UserInfo.from(activityLog.getUser()),
                 activityLog.getType().name(), targetType, activityLog.getTaskId(),
-                DescriptionGenerator.createDescription(activityLog),
+                description,
                 activityLog.getCreatedAt());
     }
 

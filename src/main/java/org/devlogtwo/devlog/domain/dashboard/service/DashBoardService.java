@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.dto.PageResponse;
 import org.devlogtwo.devlog.common.type.TaskStatus;
+import org.devlogtwo.devlog.common.util.DescriptionGenerator;
 import org.devlogtwo.devlog.domain.actlog.entity.ActivityLog;
 import org.devlogtwo.devlog.domain.actlog.service.ActivityLogServiceApi;
 import org.devlogtwo.devlog.domain.dashboard.dto.response.DashboardRecentActivityResponse;
@@ -35,6 +36,7 @@ public class DashBoardService {
     private final TeamMemberServiceApi teamMemberService;
     private final TeamServiceApi teamService;
     private final ActivityLogServiceApi activityLogServiceApi;
+    private final DescriptionGenerator descriptionGenerator;
 
     //대시보드 통계 조회
     public DashboardStatsResponse getStats(Long id) {
@@ -128,7 +130,9 @@ public class DashBoardService {
 
         Page<ActivityLog> activityLogPage = activityLogServiceApi.findAllByOrderByCreatedAtDesc(pageable);
 
-        Page<DashboardRecentActivityResponse> responsePage = activityLogPage.map(DashboardRecentActivityResponse::from);
+        Page<DashboardRecentActivityResponse> responsePage = activityLogPage
+                .map(activityLog -> DashboardRecentActivityResponse.of(activityLog,
+                        descriptionGenerator.createDescription(activityLog)));
 
         return PageResponse.from(responsePage);
     }
