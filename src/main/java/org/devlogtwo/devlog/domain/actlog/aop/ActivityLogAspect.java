@@ -55,7 +55,6 @@ public class ActivityLogAspect {
 
         try {
             result = joinPoint.proceed(); // 2. 대상 메서드 실행
-//            return result;
         } catch (Exception e) {
             success = false;
             result = e.getClass().getSimpleName() + ": " + e.getMessage();
