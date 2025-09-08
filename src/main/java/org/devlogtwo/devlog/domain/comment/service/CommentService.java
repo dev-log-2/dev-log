@@ -42,8 +42,8 @@ public class CommentService implements CommentServiceApi {
         Task task = taskService.findTaskById(taskId);
 
         Comment parent = null;
-        if (request.getParentId() != null) {
-            parent = commentRepository.findById(request.getParentId())
+        if (request.parentId() != null) {
+            parent = commentRepository.findById(request.parentId())
                     .orElseThrow(() -> new CustomBusinessException(ErrorCode.PARENT_COMMENT_NOT_FOUND));
             if (parent.getParent() != null) {
                 throw new CustomBusinessException(ErrorCode.COMMENT_DEPTH_EXCEEDED);
@@ -53,7 +53,7 @@ public class CommentService implements CommentServiceApi {
         Comment newComment = Comment.create(
                 user,
                 task,
-                request.getContent(),
+                request.content(),
                 parent
         );
         Comment savedComment = commentRepository.save(newComment);
@@ -157,7 +157,7 @@ public class CommentService implements CommentServiceApi {
         if (!comment.getTask().getId().equals(taskId)) {
             throw new CustomBusinessException(ErrorCode.COMMENT_NOT_IN_TASK);
         }
-        comment.updateContent(request.getContent());
+        comment.updateContent(request.content());
 
         return CommentResponse.from(comment);
     }
