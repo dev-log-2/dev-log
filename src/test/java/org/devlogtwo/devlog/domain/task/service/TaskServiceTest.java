@@ -150,5 +150,20 @@ public class TaskServiceTest {
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.INVALID_TASK_STATUS_CHANGE);
     }
 
+    @Test
+    @DisplayName("태스크 삭제 성공")
+    void deleteTask() {
+        // given
+        Long taskId = 1L;
+        given(taskRepository.findById(taskId)).willReturn(Optional.of(task));
+        willDoNothing().given(taskRepository).delete(task);
+
+        // when
+        taskService.deleteTask(taskId);
+
+        // then
+        then(taskRepository).should(times(1)).delete(task);
+    }
+
 
 }
