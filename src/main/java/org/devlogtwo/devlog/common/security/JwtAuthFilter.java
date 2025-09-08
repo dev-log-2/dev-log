@@ -64,7 +64,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     new CustomBusinessException(ErrorCode.EXPIRED_TOKEN));
             return;
         } catch (UsernameNotFoundException e) { // 토큰은 유효하지만 DB에 사용자가 없는 경우 -> 필터체인에서 url에 따라 허용 판단
-            log.warn("[JwtAuthFilter] 인증 실패: 유효하지 않은 토큰 - username={}", e.getMessage());
+            log.warn("[JwtAuthFilter] 인증 보류: 회원가입과 로그인은 수행가능합니다. 보류 토큰 - username={}", e.getMessage());
         } catch (MalformedJwtException e) { // 토큰의 형식이 올바르지 않은 경우
             log.warn("[JwtAuthFilter] 인증 실패: 유효하지 않은 토큰 - username={}", e.getMessage());
             handlerExceptionResolver.resolveException(request, response, null,
