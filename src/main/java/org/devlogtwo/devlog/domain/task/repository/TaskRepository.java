@@ -51,7 +51,8 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
                 )
                 FROM Task t
                 WHERE t.dueDate IS NOT NULL
-                  AND t.dueDate BETWEEN :startDateTime AND :endDateTime
+                        AND t.dueDate >= :startDateTime
+                        AND t.dueDate < :endDateTime
                 GROUP BY CAST(t.dueDate AS LocalDate)
                 ORDER BY CAST(t.dueDate AS LocalDate) ASC
             """)

@@ -163,8 +163,7 @@ public class DashBoardService {
         LocalDate sunday = today.with(DayOfWeek.SUNDAY);
 
         LocalDateTime startDateTime = monday.atStartOfDay();
-        // 일요일의 가장 마지막 시간까지 포함하기 위해 다음 날 자정 직전으로 설정
-        LocalDateTime endDateTime = sunday.plusDays(1).atStartOfDay().minusNanos(1);
+        LocalDateTime endDateTime = sunday.plusDays(1).atStartOfDay(); // db에서 다음 날 자정 미만으로 하기 위해 사용
 
         List<TaskDailySummaryResponse> summaries = taskServiceApi.findWeeklyTaskSummary(startDateTime, endDateTime);
 
