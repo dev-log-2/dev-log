@@ -60,8 +60,7 @@ public class ActivityLogService implements ActivityLogServiceApi {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ActivityLog> findAllByOrderByCreatedAtDesc(Pageable pageable) {
-        return activityLogRepository.findAllByOrderByCreatedAtDesc(pageable);
+    public Page<ActivityLog> getMyFeedActivities(UserPrincipal currentUser, Pageable pageable) {
+        return activityLogRepository.findAllByUserIdOrderByCreatedAtDesc(currentUser.id(), pageable);
     }
-
 }
