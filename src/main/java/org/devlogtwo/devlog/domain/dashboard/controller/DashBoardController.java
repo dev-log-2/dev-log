@@ -51,9 +51,11 @@ public class DashBoardController {
 
     @GetMapping("/api/activities/my")
     public ResponseEntity<GlobalApiResponse<PageResponse<DashboardRecentActivityResponse>>> getRecentActivity(
-            @PageableDefault(size = 10) Pageable pageable) {
+            @PageableDefault(size = 10) Pageable pageable,
+            @AuthenticationPrincipal UserPrincipal currentUser) {
 
         PageResponse<DashboardRecentActivityResponse> response = dashBoardService.getRecentActivity(
+                currentUser,
                 pageable);
 
         return ResponseHelper.success(SuccessCode.DASHBOARD_RECENT_ACTIVITY_SUCCESS, response);

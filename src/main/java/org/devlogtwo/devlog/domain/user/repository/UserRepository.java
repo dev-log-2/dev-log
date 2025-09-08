@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             nativeQuery = true)
     Integer existsByUsernameIgnoringSoftDelete(@Param("username") String username);
 
-    // ✅ nativeQuery = true를 사용하여 @SQLRestriction을 우회합니다.
+    // nativeQuery = true를 사용하여 @SQLRestriction을 우회합니다.
     @Query(value = """
             SELECT COUNT(*)
             FROM user 

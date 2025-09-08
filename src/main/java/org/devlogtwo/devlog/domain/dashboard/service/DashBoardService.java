@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.dto.PageResponse;
+import org.devlogtwo.devlog.common.security.UserPrincipal;
 import org.devlogtwo.devlog.common.type.TaskStatus;
 import org.devlogtwo.devlog.common.util.DescriptionGenerator;
 import org.devlogtwo.devlog.domain.actlog.entity.ActivityLog;
@@ -145,12 +146,14 @@ public class DashBoardService {
     }
 
 
-    public PageResponse<DashboardRecentActivityResponse> getRecentActivity(Pageable pageable) {
+    public PageResponse<DashboardRecentActivityResponse> getRecentActivity(UserPrincipal currentUser,
+                                                                           Pageable pageable) {
 
-        Page<ActivityLog> activityLogPage = activityLogServiceApi.findAllByOrderByCreatedAtDesc(pageable);
+        Page<ActivityLog> activityLogPage = activityLogServiceApi.getMyFeedActivities(currentUser, pageable);
 
         Page<DashboardRecentActivityResponse> responsePage = activityLogPage
-                .map(activityLog -> DashboardRecentActivityResponse.of(activityLog,
+                .map(activityLog -> DashboardRecentActivityResponse.of(
+                        activityLog,
                         descriptionGenerator.createDescription(activityLog)));
 
         return PageResponse.from(responsePage);

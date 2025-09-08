@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long>, JpaSpecificationExecutor<ActivityLog> {
 
     @EntityGraph(value = "ActivityLog.withUser")
-    Page<ActivityLog> findAllByOrderByCreatedAtDesc(Pageable pageable);
+    Page<ActivityLog> findAllByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
 
     @Override
     @EntityGraph(value = "ActivityLog.withUser")
