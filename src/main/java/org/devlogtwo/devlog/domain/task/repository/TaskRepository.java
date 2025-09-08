@@ -43,7 +43,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findAllByAssignee_Id(Long assigneeId);
 
-    //
     @Query("""
                 SELECT new org.devlogtwo.devlog.domain.dashboard.dto.response.TaskDailySummaryResponse(
                     CAST(t.dueDate AS LocalDate),
