@@ -45,7 +45,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String bearerToken = getToken(authHeaderValue);
 
             if (bearerToken == null) {
-                log.warn("[JwtAuthFilter] 토큰이 존재하지 않는 요청입니다.");
+                log.debug("[JwtAuthFilter] 토큰이 존재하지 않는 요청입니다.");
                 filterChain.doFilter(request, response);
                 return;
             }
