@@ -13,8 +13,10 @@ import java.util.Optional;
 import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
 import org.devlogtwo.devlog.common.type.TaskPriority;
+import org.devlogtwo.devlog.common.type.TaskStatus;
 import org.devlogtwo.devlog.common.type.UserRole;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskCreateRequest;
+import org.devlogtwo.devlog.domain.task.dto.request.TaskStatusUpdateRequest;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskResponse;
 import org.devlogtwo.devlog.domain.task.entity.Task;
 import org.devlogtwo.devlog.domain.task.repository.TaskRepository;
@@ -114,6 +116,22 @@ public class TaskServiceTest {
         assertThrows(CustomBusinessException.class, () -> {
             taskService.getTask(taskId);
         });
+    }
+
+    @Test
+    @DisplayName("태스크 상태 변경 성공 테스트")
+    void updateTaskStatus() {
+        // given
+        Long taskId = 1L;
+        TaskStatusUpdateRequest request = new TaskStatusUpdateRequest(TaskStatus.IN_PROGRESS);
+
+        given(taskRepository.findById(taskId)).willReturn(Optional.of(task));
+
+        // when
+        TaskResponse response = taskService.updateTaskStatus(taskId, request);
+
+        // then
+        assertThat(response.status()).isEqualTo(TaskStatus.IN_PROGRESS);
     }
 
 
