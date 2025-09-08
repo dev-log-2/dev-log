@@ -10,9 +10,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -27,6 +28,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
+@NamedEntityGraph(
+        name = "ActivityLog.withUser",
+        attributeNodes = @NamedAttributeNode("user"))
 public class ActivityLog {
 
     @Id
@@ -40,14 +44,20 @@ public class ActivityLog {
     @Column(nullable = false, length = 50)
     private ActivityType type;
 
-    @Column(nullable = false)
     private Long taskId;
 
     private Long commentId;
 
-    @NotNull
-    @Column(nullable = false)
-    private String description;
+    @Column
+    private String methodName;
+
+    @Column(columnDefinition = "TEXT")
+    private String parameters;
+
+    @Column(columnDefinition = "TEXT")
+    private String result;
+
+    private boolean success;
 
     @CreatedDate
     @Column(updatable = false)
@@ -55,21 +65,29 @@ public class ActivityLog {
     private LocalDateTime createdAt;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private ActivityLog(User user, ActivityType type, Long taskId, Long commentId, String description) {
+    private ActivityLog(User user, ActivityType type, String methodName, String parameters, boolean success,
+                        String result, Long taskId, Long commentId) {
         this.user = user;
+        this.type = type;
+        this.methodName = methodName;
+        this.parameters = parameters;
+        this.success = success;
+        this.result = result;
         this.taskId = taskId;
         this.commentId = commentId;
-        this.type = type;
-        this.description = description;
     }
 
-    public static ActivityLog create(User user, ActivityType type, Long taskId, Long commentId, String description) {
+    public static ActivityLog create(User user, ActivityType type, String methodName, String parameters,
+                                     boolean success, String result, Long taskId, Long commentId) {
         return ActivityLog.builder()
                 .user(user)
+                .type(type)
+                .methodName(methodName)
+                .parameters(parameters)
+                .success(success)
+                .result(result)
                 .taskId(taskId)
                 .commentId(commentId)
-                .type(type)
-                .description(description)
                 .build();
     }
 }

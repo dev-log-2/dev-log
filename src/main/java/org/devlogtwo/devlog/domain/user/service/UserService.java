@@ -81,4 +81,10 @@ public class UserService implements UserServiceApi {
                 .map(UserAssignableResponse::from)
                 .toList();
     }
+
+    // Activity Log 저장 시 불필요한 User 조회를 막기 위해 proxy 객체 조회 사용
+    @Override
+    public User getReferenceById(Long userId) {
+        return userRepository.getReferenceById(userId);
+    }
 }

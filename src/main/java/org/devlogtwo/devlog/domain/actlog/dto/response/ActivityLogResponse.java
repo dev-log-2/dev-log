@@ -14,7 +14,7 @@ public record ActivityLogResponse(
         LocalDateTime timestamp,
         String description
 ) {
-    public static ActivityLogResponse from(ActivityLog log) {
+    public static ActivityLogResponse of(ActivityLog log, String description) {
         return new ActivityLogResponse(
                 log.getId(),
                 log.getType(),
@@ -22,7 +22,7 @@ public record ActivityLogResponse(
                 UserDetailsResponse.from(log.getUser()),
                 log.getTaskId(),
                 log.getCreatedAt(),
-                log.getDescription()
+                description
         );
     }
 }

@@ -23,4 +23,6 @@ public interface UserServiceApi {
     void deleteUser(User user);
 
     Optional<User> findByUsername(String username);
+
+    User getReferenceById(Long userId);
 }

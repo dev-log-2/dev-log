@@ -1,5 +1,10 @@
 package org.devlogtwo.devlog.domain.actlog.aop;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -13,10 +18,7 @@ import org.devlogtwo.devlog.common.type.ActivityType;
 import org.devlogtwo.devlog.domain.actlog.service.ActivityLogService;
 import org.devlogtwo.devlog.domain.comment.dto.response.CommentResponse;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskResponse;
-import org.devlogtwo.devlog.domain.task.entity.Task;
 import org.devlogtwo.devlog.domain.task.service.TaskService;
-import org.devlogtwo.devlog.domain.user.entity.User;
-import org.devlogtwo.devlog.domain.user.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -28,8 +30,8 @@ import org.springframework.stereotype.Component;
 public class ActivityLogAspect {
 
     private final ActivityLogService activityLogService;
-    private final UserService userService; // User 엔티티 조회용
-    private final TaskService taskService; // Task의 변경 전 상태 조회용
+    private final TaskService taskService; // Task의 변경 전 상태 조회를 위해 필요
+    private final ObjectMapper objectMapper;
 
     @Pointcut("@annotation(activityLogger)")
     public void activityLogPointcut(ActivityLogger activityLogger) {
@@ -38,44 +40,85 @@ public class ActivityLogAspect {
     @Around("activityLogPointcut(activityLogger)")
     public Object logActivity(ProceedingJoinPoint joinPoint, ActivityLogger activityLogger) throws Throwable {
 
-        User currentUser = getCurrentUser();
-        if (currentUser == null) {
-            log.warn("로그를 기록할 사용자 정보를 찾을 수 없어, 대상 메소드만 실행합니다.");
+        UserPrincipal currentUserPrincipal = getCurrentUserPrincipal();
+        if (currentUserPrincipal == null) {
+            log.warn("[ActivityLogAspect] 로그를 기록할 사용자 정보를 찾을 수 없어, 대상 메소드만 실행합니다.");
             return joinPoint.proceed();
         }
 
-        // TASK_STATUS_CHANGE 경우에만 사용
+        // Type이 TASK_STATUS_CHANGE 경우에만 사용
         String beforeState = getBeforeState(activityLogger.type(), joinPoint);
 
-        Object result = joinPoint.proceed();
+        Object result = null;
+        boolean success = true;
+        Exception exceptionHandler = null;
 
         try {
-            Long taskId = extractId(joinPoint, result, "taskId");
-            Long commentId = extractId(joinPoint, result, "commentId");
-            String description = createLogDescription(activityLogger.type(), result, beforeState);
-
-            activityLogService.saveLog(currentUser, activityLogger.type(), taskId, commentId, description);
-            log.info("[ActivityLogAspect]: Success - [User: {}] [Type: {}] [Description: {}]",
-                    currentUser.getUsername(),
-                    activityLogger.type().name(), description);
-
+            result = joinPoint.proceed(); // 2. 대상 메서드 실행
         } catch (Exception e) {
-            // 로깅으로 인해 종료되지 않도록 예외를 새로 던지지는 않음
-            log.error("[ActivityLogAspect]", e);
+            success = false;
+            result = e.getClass().getSimpleName() + ": " + e.getMessage();
+            exceptionHandler = e;
+            throw e;
+        } finally {
+            recordLog(joinPoint, activityLogger, currentUserPrincipal, success, beforeState, result, exceptionHandler);
         }
-
         return result;
     }
 
-    // TODO: 매 번 조회하고 있어 더 좋은 방법이 있나 고민 필요
-    // 여기서 조회를 안 하고 userId만 넘기면 결국 서비스에서 어차피 하게 됨 위치가 어디가 나은지?
-    private User getCurrentUser() {
 
+    // User 엔티티를 매 번 조회하는 대신 UserPrincipal을 사용하여 db 조회가 이뤄지지 않도록 개선
+    private UserPrincipal getCurrentUserPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal principal)) {
-            return null;
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal principal) {
+            return principal;
         }
-        return userService.findUserById(principal.id());
+        return null;
+    }
+
+    private void recordLog(ProceedingJoinPoint joinPoint, ActivityLogger logger, UserPrincipal principal,
+                           boolean success, String beforeState, Object result, Exception exception) {
+        try {
+            MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+            String methodName = signature.toShortString();
+            String params = getParamsAsString(joinPoint.getArgs());
+
+            Long taskId = extractId(joinPoint, result, "taskId");
+            Long commentId = extractId(joinPoint, result, "commentId");
+            String exceptionStr = (exception != null) ? exception.getClass().getSimpleName() : "None";
+
+            String resultStr;
+            if (success) {
+                // 성공 시, void 메서드(result=null)는 JSON "null"로, 나머지는 객체를 JSON으로 변환
+                resultStr = (result != null) ? objectMapper.writeValueAsString(result) : "null";
+            } else {
+                // 실패 시, 예외 정보를 JSON 문자열로 변환
+                resultStr = objectMapper.writeValueAsString(
+                        exception.getClass().getSimpleName() + ": " + exception.getMessage());
+            }
+
+            if (logger.type() == ActivityType.TASK_STATUS_CHANGED && result instanceof TaskResponse) {
+                Map<String, Object> statusChangeMap = Map.of(
+                        "before", beforeState,
+                        "after", result
+                );
+                resultStr = objectMapper.writeValueAsString(statusChangeMap);
+            }
+
+            log.info(
+                    "[ActivityLog] [User: {}, Method: {}, Params: {}, Success: {}, ExecutionTime: {}ms, Exception: {}]",
+                    principal.username(),
+                    methodName,
+                    params,
+                    success,
+                    LocalDateTime.now(),
+                    exceptionStr
+            );
+            activityLogService.saveLog(principal.id(), logger.type(), methodName, params, success, resultStr,
+                    taskId, commentId);
+        } catch (Exception e) {
+            log.error("[ActivityLogAspect] 로그 기록 중 오류 발생", e);
+        }
     }
 
     private String getBeforeState(ActivityType type, ProceedingJoinPoint joinPoint) {
@@ -86,46 +129,11 @@ public class ActivityLogAspect {
 
         Long taskId = findArgumentByName(joinPoint, "taskId", Long.class);
 
-        // 결국 이전 상태를 알기 위해서는 조회를 해와야함..
+        // 결국 이전 상태를 알기 위해서는 task db 조회 필요
         if (taskId != null) {
-            Task task = taskService.findTaskById(taskId);
-            return task.getStatus().name();
+            return taskService.findTaskById(taskId).getStatus().name();
         }
         return null;
-    }
-
-    private String createLogDescription(ActivityType type, Object result, String beforeState) {
-
-        if (result instanceof TaskResponse task) {
-            switch (type) {
-                case TASK_CREATED:
-                    return String.format("새로운 작업 '%s'을 생성했습니다.", task.title());
-                case TASK_UPDATED:
-                    return "작업 정보를 수정했습니다.";
-                case TASK_STATUS_CHANGED:
-                    if (beforeState != null) {
-                        return String.format("작업 상태를 '%s'에서 '%s'로 변경했습니다.", beforeState,
-                                task.status());
-                    }
-                    return String.format("작업 상태를 '%s'로 변경했습니다.", task.status());
-            }
-        } else if (result instanceof CommentResponse comment) {
-            switch (type) {
-                case COMMENT_CREATED:
-                    return "작업에 댓글을 작성했습니다.";
-                case COMMENT_UPDATED:
-                    return "댓글을 수정했습니다.";
-            }
-        } else {
-            switch (type) {
-                case TASK_DELETED:
-                    return "작업을 삭제했습니다.";
-                case COMMENT_DELETED:
-                    return "댓글을 삭제했습니다.";
-            }
-        }
-
-        return type.getDescription();
     }
 
     private Long extractId(ProceedingJoinPoint joinPoint, Object result, String idName) {
@@ -164,5 +172,31 @@ public class ActivityLogAspect {
             }
         }
         return null;
+    }
+
+    private String getParamsAsString(Object[] args) {
+        if (args == null || args.length == 0) {
+            return "[]";
+        }
+        try {
+            return Arrays.stream(args)
+                    .map(obj -> {
+                        try {
+                            // DTO 객체 등에 password 필드가 포함된 경우를 고려하여 문자열 검사
+                            String jsonStr = objectMapper.writeValueAsString(obj);
+                            if (jsonStr.toLowerCase().contains("\"password\"")) {
+                                return "FILTERED_SENSITIVE_INFO";
+                            }
+                            return jsonStr;
+                        } catch (Exception e) {
+                            // 직렬화할 수 없는 객체는 클래스 이름만 로깅
+                            return obj.getClass().getSimpleName();
+                        }
+                    })
+                    .collect(Collectors.joining(", "));
+        } catch (Exception e) {
+            log.warn("[ActivityLogAspect] 파라미터를 문자열로 변환하는 중 오류 발생", e);
+            return "ParamConversionError";
+        }
     }
 }

@@ -15,20 +15,7 @@ public record DashboardRecentActivityResponse(
         String description,
         LocalDateTime createdAt
 ) {
-    public record UserInfo(
-            Long id,
-            String name
-    ) {
-        public static UserInfo from(User user) {
-            if (user == null) {
-                return null;
-            }
-
-            return new UserInfo(user.getId(), user.getName());
-        }
-    }
-
-    public static DashboardRecentActivityResponse from(ActivityLog activityLog) {
+    public static DashboardRecentActivityResponse of(ActivityLog activityLog, String description) {
 
         String targetType;
         ActivityType activityType = activityLog.getType();
@@ -42,7 +29,21 @@ public record DashboardRecentActivityResponse(
         return new DashboardRecentActivityResponse(
                 activityLog.getId(), activityLog.getUser() != null ? activityLog.getUser().getId() : null,
                 UserInfo.from(activityLog.getUser()),
-                activityLog.getType().name(), targetType, activityLog.getTaskId(), activityLog.getDescription(),
+                activityLog.getType().name(), targetType, activityLog.getTaskId(),
+                description,
                 activityLog.getCreatedAt());
+    }
+
+    public record UserInfo(
+            Long id,
+            String name
+    ) {
+        public static UserInfo from(User user) {
+            if (user == null) {
+                return null;
+            }
+
+            return new UserInfo(user.getId(), user.getName());
+        }
     }
 }
