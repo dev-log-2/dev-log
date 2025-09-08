@@ -194,14 +194,10 @@ docker run -d -p 3000:3000 parksunggyu/taskflow-fe:tagname
 
 ```json lines
 {
-  "success": true,
-  // boolean
-  "message": "성공 메시지",
-  // string
-  "data": {},
-  // 실제 데이터 (null 가능)
-  "timestamp": "2024-03-21T10:00:00Z"
-  // ISO 8601 형식
+  "success": true, // boolean
+  "message": "성공 메시지", // string
+  "data": {}, // 실제 데이터 (null 가능)
+  "timestamp": "2024-03-21T10:00:00Z" // ISO 8601 형식
 }
 ```
 
