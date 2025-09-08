@@ -134,5 +134,21 @@ public class TaskServiceTest {
         assertThat(response.status()).isEqualTo(TaskStatus.IN_PROGRESS);
     }
 
+    @Test
+    @DisplayName("잘못된 태스크 상태 변경 시 예외가 발생한다.")
+    void updateTaskStatus_InvalidChange() {
+        // given
+        Long taskId = 1L;
+        TaskStatusUpdateRequest request = new TaskStatusUpdateRequest(TaskStatus.DONE);
+        given(taskRepository.findById(taskId)).willReturn(Optional.of(task));
+
+        // when & then
+        CustomBusinessException exception = assertThrows(CustomBusinessException.class, () -> {
+            taskService.updateTaskStatus(taskId, request);
+        });
+
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.INVALID_TASK_STATUS_CHANGE);
+    }
+
 
 }
