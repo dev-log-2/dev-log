@@ -192,7 +192,7 @@ docker run -d -p 3000:3000 parksunggyu/taskflow-fe:tagname
 - API 명세 요약은 아래와 같으며, 모든 응답은 표준화된 공통 응답 형식을 따릅니다.
 - 상세 명세는 [링크](https://teamsparta.notion.site/Kotlin-8-2622dc3ef514804f9d68e58f2bc713e2?source=copy_link)를 통해 확인할 수 있습니다.
 
-```json
+```json lines
 {
   "success": true,
   // boolean
