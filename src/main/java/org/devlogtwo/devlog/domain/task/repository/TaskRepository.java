@@ -4,12 +4,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.devlogtwo.devlog.common.type.TaskStatus;
+import org.devlogtwo.devlog.domain.dashboard.dto.response.TaskDailySummaryResponse;
 import org.devlogtwo.devlog.domain.task.entity.Task;
 import org.devlogtwo.devlog.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
@@ -39,4 +42,22 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     long countByAssigneeIdAndDueDateBetween(Long userId, LocalDateTime start, LocalDateTime end);
 
     List<Task> findAllByAssignee_Id(Long assigneeId);
+
+    //
+    @Query("""
+                SELECT new org.devlogtwo.devlog.domain.dashboard.dto.response.TaskDailySummaryResponse(
+                    CAST(t.dueDate AS LocalDate),
+                    COUNT(t.id),
+                    SUM(CASE WHEN t.status = 'DONE' THEN 1 ELSE 0 END)
+                )
+                FROM Task t
+                WHERE t.dueDate IS NOT NULL
+                  AND t.dueDate BETWEEN :startDateTime AND :endDateTime
+                GROUP BY CAST(t.dueDate AS LocalDate)
+                ORDER BY CAST(t.dueDate AS LocalDate) ASC
+            """)
+    List<TaskDailySummaryResponse> findWeeklyTaskSummary(
+            @Param("startDateTime") LocalDateTime startDateTime,
+            @Param("endDateTime") LocalDateTime endDateTime
+    );
 }
