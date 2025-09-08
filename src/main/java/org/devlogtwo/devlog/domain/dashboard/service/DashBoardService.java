@@ -2,6 +2,7 @@ package org.devlogtwo.devlog.domain.dashboard.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,26 +74,37 @@ public class DashBoardService {
     }
 
     public MyTasksSummaryResponse getMyTasks(Long userId) {
-        LocalDate Today = LocalDate.now();
-
         List<Task> allTasksByAssignee = taskServiceApi.findAllByAssignee_Id(userId);
-        List<MyTasksResponse> todayTasks = allTasksByAssignee.stream()
-                .filter(task -> task.getDueDate().toLocalDate().equals(Today))
-                .map(MyTasksResponse::from).toList();
-        List<MyTasksResponse> upcomingTasks = allTasksByAssignee.stream()
-                .filter(task -> task.getDueDate().toLocalDate().isAfter(Today))
-                .map(MyTasksResponse::from).toList();
-        List<MyTasksResponse> overdueTasks = allTasksByAssignee.stream()
-                .filter(task -> task.getDueDate().toLocalDate().isBefore(Today))
-                .map(MyTasksResponse::from).toList();
+        LocalDate today = LocalDate.now();
+
+        List<MyTasksResponse> todayTasks = new ArrayList<>();
+        List<MyTasksResponse> upcomingTasks = new ArrayList<>();
+        List<MyTasksResponse> overdueTasks = new ArrayList<>();
+
+        allTasksByAssignee.stream()
+                .filter(task -> task.getDueDate() != null)
+                .forEach(task -> {
+                    LocalDate dueDate = task.getDueDate().toLocalDate();
+                    MyTasksResponse taskResponse = MyTasksResponse.from(task);
+
+                    if (dueDate.equals(today)) {
+                        todayTasks.add(taskResponse);
+                    } else if (dueDate.isAfter(today)) {
+                        upcomingTasks.add(taskResponse);
+                    } else {
+                        overdueTasks.add(taskResponse);
+                    }
+                });
 
         return MyTasksSummaryResponse.of(todayTasks, upcomingTasks, overdueTasks);
     }
 
-
     public Map<String, Integer> getTeamProgress() {
 
         List<TeamMember> teamMembers = teamMemberService.findAll();
+        if (teamMembers.isEmpty()) {
+            return Map.of();
+        }
 
         Map<Long, String> teamNames = teamService.findAll().stream()
                 .collect(Collectors.toMap(
@@ -101,6 +113,7 @@ public class DashBoardService {
                 ));
 
         Map<Long, List<TeamMember>> membersByTeamId = teamMembers.stream()
+                .filter(member -> teamNames.containsKey(member.getTeam().getId()))
                 .collect(Collectors.groupingBy(
                         teamMember -> teamMember.getTeam().getId()
                 ));
