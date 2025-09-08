@@ -1,5 +1,6 @@
 package org.devlogtwo.devlog.domain.actlog.controller;
 
+import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.code.SuccessCode;
@@ -30,8 +31,8 @@ public class ActivityLogController {
     public ResponseEntity<GlobalApiResponse<PageResponse<ActivityLogResponse>>> getActivities(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(required = false) ActivityType type,
-            @RequestParam(required = false) Long userId,
-            @RequestParam(required = false) Long taskId,
+            @RequestParam(required = false) @Positive(message = "사용자 ID는 양수여야 합니다.") Long userId,
+            @RequestParam(required = false) @Positive(message = "태스크 ID는 양수여야 합니다.") Long taskId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)

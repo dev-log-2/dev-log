@@ -1,5 +1,6 @@
 package org.devlogtwo.devlog.common.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import java.util.Objects;
 import org.devlogtwo.devlog.common.code.ErrorCode;
 import org.devlogtwo.devlog.common.dto.GlobalApiResponse;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 
 @RestControllerAdvice
@@ -32,5 +34,26 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<GlobalApiResponse<Void>> handleException(Exception e) {
         return ResponseHelper.error(ErrorCode.INTERNAL_SERVER_ERROR);
+    }
+
+    // @RequestParam, @PathVariable 유효성 검사 예외 처리
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<GlobalApiResponse<Void>> handleConstraintViolationException(ConstraintViolationException e) {
+        String errorMessage = e.getConstraintViolations().stream()
+                .map(violation -> violation.getMessage())
+                .findFirst()
+                .orElse(ErrorCode.VALIDATION_FAILED.getMessage());
+
+        return ResponseHelper.error(ErrorCode.VALIDATION_FAILED, errorMessage);
+    }
+
+    // @RequestParam, @PathVariable 타입 변환 실패 예외 처리
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<GlobalApiResponse<Void>> handleMethodArgumentTypeMismatchException(
+            MethodArgumentTypeMismatchException e) {
+        String message = String.format("'%s' 파라미터의 형식이 올바르지 않습니다. (필요한 타입: %s)",
+                e.getName(), e.getRequiredType().getSimpleName());
+
+        return ResponseHelper.error(ErrorCode.METHOD_ARGUMENT_NOT_VALID, message);
     }
 }
