@@ -23,7 +23,7 @@ public class SecurityConfig {
 
     private static final List<String> ALLOWED_ORIGINS = List.of("http://localhost:3000");
     private final JwtAuthFilter jwtAuthFilter;
-    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint; // ✅ 1. 커스텀 진입점 주입
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
