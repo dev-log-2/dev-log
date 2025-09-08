@@ -3,6 +3,7 @@ package org.devlogtwo.devlog.domain.task.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.devlogtwo.devlog.common.type.TaskStatus;
+import org.devlogtwo.devlog.domain.dashboard.dto.response.TaskDailySummaryResponse;
 import org.devlogtwo.devlog.domain.task.entity.Task;
 import org.devlogtwo.devlog.domain.user.entity.User;
 
@@ -25,4 +26,6 @@ public interface TaskServiceApi {
     long countByAssigneeIdAndDueDateBetween(Long userId, LocalDateTime start, LocalDateTime end);
 
     List<Task> findAllByAssignee_Id(Long assigneeId);
+
+    List<TaskDailySummaryResponse> findWeeklyTaskSummary(LocalDateTime startDateTime, LocalDateTime endDateTime);
 }

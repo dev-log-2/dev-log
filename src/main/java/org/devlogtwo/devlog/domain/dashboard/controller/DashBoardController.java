@@ -1,5 +1,6 @@
 package org.devlogtwo.devlog.domain.dashboard.controller;
 
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.code.SuccessCode;
@@ -10,6 +11,7 @@ import org.devlogtwo.devlog.common.util.ResponseHelper;
 import org.devlogtwo.devlog.domain.dashboard.dto.response.DashboardRecentActivityResponse;
 import org.devlogtwo.devlog.domain.dashboard.dto.response.DashboardStatsResponse;
 import org.devlogtwo.devlog.domain.dashboard.dto.response.MyTasksSummaryResponse;
+import org.devlogtwo.devlog.domain.dashboard.dto.response.WeeklyTrendResponse;
 import org.devlogtwo.devlog.domain.dashboard.service.DashBoardService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -57,5 +59,9 @@ public class DashBoardController {
         return ResponseHelper.success(SuccessCode.DASHBOARD_RECENT_ACTIVITY_SUCCESS, response);
     }
 
-
+    @GetMapping("/api/dashboard/weekly-trend")
+    public ResponseEntity<GlobalApiResponse<List<WeeklyTrendResponse>>> getWeeklyTrend() {
+        List<WeeklyTrendResponse> response = dashBoardService.getWeeklyTrend();
+        return ResponseHelper.success(SuccessCode.DASHBOARD_WEEKLY_TRENDS_SUCCESS, response);
+    }
 }

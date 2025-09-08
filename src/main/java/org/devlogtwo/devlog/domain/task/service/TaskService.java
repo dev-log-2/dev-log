@@ -9,10 +9,10 @@ import org.devlogtwo.devlog.common.dto.PageResponse;
 import org.devlogtwo.devlog.common.exception.CustomBusinessException;
 import org.devlogtwo.devlog.common.type.ActivityType;
 import org.devlogtwo.devlog.common.type.TaskStatus;
+import org.devlogtwo.devlog.domain.dashboard.dto.response.TaskDailySummaryResponse;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskCreateRequest;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskStatusUpdateRequest;
 import org.devlogtwo.devlog.domain.task.dto.request.TaskUpdateRequest;
-import org.devlogtwo.devlog.domain.task.dto.response.TaskPageResponse;
 import org.devlogtwo.devlog.domain.task.dto.response.TaskResponse;
 import org.devlogtwo.devlog.domain.task.entity.Task;
 import org.devlogtwo.devlog.domain.task.repository.TaskRepository;
@@ -195,5 +195,11 @@ public class TaskService implements TaskServiceApi {
     @Override
     public List<Task> findAllByAssignee_Id(Long assigneeId) {
         return taskRepository.findAllByAssignee_Id(assigneeId);
+    }
+
+    @Override
+    public List<TaskDailySummaryResponse> findWeeklyTaskSummary(LocalDateTime startDateTime,
+                                                                LocalDateTime endDateTime) {
+        return taskRepository.findWeeklyTaskSummary(startDateTime, endDateTime);
     }
 }
