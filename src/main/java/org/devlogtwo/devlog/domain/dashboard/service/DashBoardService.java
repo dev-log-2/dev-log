@@ -1,12 +1,16 @@
 package org.devlogtwo.devlog.domain.dashboard.service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.devlogtwo.devlog.common.dto.PageResponse;
 import org.devlogtwo.devlog.common.type.TaskStatus;
@@ -17,6 +21,8 @@ import org.devlogtwo.devlog.domain.dashboard.dto.response.DashboardRecentActivit
 import org.devlogtwo.devlog.domain.dashboard.dto.response.DashboardStatsResponse;
 import org.devlogtwo.devlog.domain.dashboard.dto.response.MyTasksResponse;
 import org.devlogtwo.devlog.domain.dashboard.dto.response.MyTasksSummaryResponse;
+import org.devlogtwo.devlog.domain.dashboard.dto.response.TaskDailySummaryResponse;
+import org.devlogtwo.devlog.domain.dashboard.dto.response.WeeklyTrendResponse;
 import org.devlogtwo.devlog.domain.task.entity.Task;
 import org.devlogtwo.devlog.domain.task.service.TaskServiceApi;
 import org.devlogtwo.devlog.domain.team.entity.Team;
@@ -148,5 +154,32 @@ public class DashBoardService {
                         descriptionGenerator.createDescription(activityLog)));
 
         return PageResponse.from(responsePage);
+    }
+
+    public List<WeeklyTrendResponse> getWeeklyTrend() {
+
+        LocalDate today = LocalDate.now();
+        LocalDate monday = today.with(DayOfWeek.MONDAY);
+        LocalDate sunday = today.with(DayOfWeek.SUNDAY);
+
+        LocalDateTime startDateTime = monday.atStartOfDay();
+        // 일요일의 가장 마지막 시간까지 포함하기 위해 다음 날 자정 직전으로 설정
+        LocalDateTime endDateTime = sunday.plusDays(1).atStartOfDay().minusNanos(1);
+
+        List<TaskDailySummaryResponse> summaries = taskServiceApi.findWeeklyTaskSummary(startDateTime, endDateTime);
+
+        Map<LocalDate, TaskDailySummaryResponse> summaryMap = summaries.stream()
+                .collect(Collectors.toMap(TaskDailySummaryResponse::date, summary -> summary));
+
+        // 월요일부터 일요일까지 7일간 순회
+        return IntStream.range(0, 7)
+                .mapToObj(i -> {
+                    LocalDate currentDate = monday.plusDays(i);
+                    TaskDailySummaryResponse summary = summaryMap.getOrDefault(currentDate,
+                            TaskDailySummaryResponse.of(currentDate, 0, 0));
+                    String dayName = currentDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
+                    return WeeklyTrendResponse.of(dayName, summary, currentDate);
+                })
+                .collect(Collectors.toList());
     }
 }
