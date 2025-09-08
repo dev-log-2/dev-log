@@ -15,6 +15,7 @@ import org.devlogtwo.devlog.domain.user.entity.User;
 import org.devlogtwo.devlog.domain.user.service.UserServiceApi;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
+    @Transactional
     public AuthRegisterResponse signUp(AuthRegisterRequest authRegisterRequest) {
 
         if (userService.isUsernameTaken(authRegisterRequest.username())) {
@@ -43,6 +45,7 @@ public class AuthService {
         return AuthRegisterResponse.from(savedUser);
     }
 
+    @Transactional
     public AuthLoginResponse login(AuthLoginRequest authLoginRequest) {
 
         User user = userService.findUserByUsername(authLoginRequest.username());
@@ -55,6 +58,7 @@ public class AuthService {
         return AuthLoginResponse.from(token);
     }
 
+    @Transactional
     public void withdraw(@Valid AuthWithdrawRequest authWithdrawRequest, Long userId) {
 
         User user = userService.findUserById(userId);

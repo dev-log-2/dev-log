@@ -26,10 +26,12 @@ public class ActivityLogService implements ActivityLogServiceApi {
     private final UserServiceApi userService;
 
     @Transactional
-    public void saveLog(Long userId, ActivityType type, Long taskId, Long commentId, String description) {
+    public void saveLog(Long userId, ActivityType type, String methodName, String parameters, boolean success,
+                        String result, Long taskId, Long commentId) {
 
         User userProxy = userService.getReferenceById(userId);
-        ActivityLog newActivityLog = ActivityLog.create(userProxy, type, taskId, commentId, description);
+        ActivityLog newActivityLog = ActivityLog.create(userProxy, type, methodName, parameters, success, result,
+                taskId, commentId);
         activityLogRepository.save(newActivityLog);
     }
 

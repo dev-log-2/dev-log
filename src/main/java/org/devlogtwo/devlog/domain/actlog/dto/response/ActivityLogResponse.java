@@ -2,6 +2,7 @@ package org.devlogtwo.devlog.domain.actlog.dto.response;
 
 import java.time.LocalDateTime;
 import org.devlogtwo.devlog.common.type.ActivityType;
+import org.devlogtwo.devlog.common.util.DescriptionGenerator;
 import org.devlogtwo.devlog.domain.actlog.entity.ActivityLog;
 import org.devlogtwo.devlog.domain.user.dto.response.UserDetailsResponse;
 
@@ -22,7 +23,7 @@ public record ActivityLogResponse(
                 UserDetailsResponse.from(log.getUser()),
                 log.getTaskId(),
                 log.getCreatedAt(),
-                log.getDescription()
+                DescriptionGenerator.createDescription(log)
         );
     }
 }
