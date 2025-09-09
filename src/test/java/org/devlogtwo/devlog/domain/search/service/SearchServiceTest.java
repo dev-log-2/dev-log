@@ -2,10 +2,8 @@ package org.devlogtwo.devlog.domain.search.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import org.devlogtwo.devlog.common.type.TaskPriority;
 import org.devlogtwo.devlog.common.type.UserRole;
@@ -71,11 +69,9 @@ public class SearchServiceTest {
         assertThat(response.users().get(0).id()).isEqualTo(user.getId());
         assertThat(response.users().get(0).name()).isEqualTo(user.getName());
 
-        // team
+        // team 검색 결과
         assertThat(response.teams()).hasSize(1);
         assertThat(response.teams().get(0).id()).isEqualTo(team.getId());
         assertThat(response.teams().get(0).name()).isEqualTo(team.getName());
     }
-
-
 }
