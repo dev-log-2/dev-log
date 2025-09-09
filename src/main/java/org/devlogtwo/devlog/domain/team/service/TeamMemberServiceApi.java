@@ -15,4 +15,6 @@ public interface TeamMemberServiceApi {
     void deleteByTeamIdAndUserId(Long teamId, Long userId);
 
     List<TeamMember> findAll();
+
+    boolean existsByTeamIdAndUserId(Long teamId, Long userId);
 }

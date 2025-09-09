@@ -34,6 +34,7 @@ public enum ErrorCode {
     TEAM_NOT_FOUND(HttpStatus.NOT_FOUND, "팀을 찾을 수 없습니다"),
     TEAM_MEMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 팀에 참여한 사용자입니다"),
     TEAM_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 팀명입니다"),
+    TEAM_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "팀 멤버를 찾을 수 없습니다."),
 
     // --- Task Errors ---
     INVALID_TASK_STATUS_CHANGE(HttpStatus.BAD_REQUEST, "상태는 TODO -> IN_PROGRESS -> DONE 순으로만 변경 가능합니다."),

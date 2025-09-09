@@ -26,7 +26,7 @@ public class TeamMemberService implements TeamMemberServiceApi {
 
     @Transactional
     public TeamResponse joinMember(Long teamId, TeamMemberJoinRequest request) {
-        if (teamMemberRepository.existsByTeamIdAndUserId(teamId, request.userId())) {
+        if (existsByTeamIdAndUserId(teamId, request.userId())) {
             throw new CustomBusinessException(ErrorCode.TEAM_MEMBER_ALREADY_EXISTS);
         }
         User foundUser = userService.findUserById(request.userId());
@@ -86,5 +86,8 @@ public class TeamMemberService implements TeamMemberServiceApi {
         return teamMemberRepository.findAll();
     }
 
+    public boolean existsByTeamIdAndUserId(Long teamId, Long userId) {
+        return teamMemberRepository.existsByTeamIdAndUserId(teamId, userId);
+    }
 
 }

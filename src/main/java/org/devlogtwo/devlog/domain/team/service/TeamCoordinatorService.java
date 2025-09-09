@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.devlogtwo.devlog.common.code.ErrorCode;
+import org.devlogtwo.devlog.common.exception.CustomBusinessException;
 import org.devlogtwo.devlog.domain.team.dto.request.TeamUpdateRequest;
 import org.devlogtwo.devlog.domain.team.dto.response.TeamDeleteResponse;
 import org.devlogtwo.devlog.domain.team.dto.response.TeamMemberResponse;
@@ -31,6 +33,9 @@ public class TeamCoordinatorService {
     public List<TeamResponse> getTeams() {
 
         List<Team> teams = teamService.findAll();
+        if (teams.isEmpty()) {
+            return List.of();
+        }
         List<Long> teamIds = teams.stream()
                 .map(Team::getId)
                 .toList();
@@ -73,10 +78,13 @@ public class TeamCoordinatorService {
 
     @Transactional
     public TeamResponse deleteMemberFromTeam(Long teamId, Long userId) {
-        Team team = teamService.findById(teamId);
+        if (!teamMemberService.existsByTeamIdAndUserId(teamId, userId)) {
+            throw new CustomBusinessException(ErrorCode.TEAM_MEMBER_NOT_FOUND);
+        }
 
         teamMemberService.deleteByTeamIdAndUserId(teamId, userId);
 
+        Team team = teamService.findById(teamId);
         List<TeamMemberResponse> members = teamMemberService.findTeamMembers(teamId);
         return TeamResponse.of(team, members);
     }
