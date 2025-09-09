@@ -2,6 +2,7 @@ package org.devlogtwo.devlog.common.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -68,7 +69,7 @@ class SecurityIntegrationTest {
         @DisplayName("회원가입 공개 엔드포인트는 토큰 없이 400(검증 실패) 응답 (401 아님)")
         void registerPublicEndpointAccessible() throws Exception {
             mockMvc.perform(
-                            org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/auth/register")
+                            post("/api/auth/register")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content("{}"))
                     .andExpect(status().isBadRequest())
@@ -78,7 +79,7 @@ class SecurityIntegrationTest {
         @Test
         @DisplayName("로그인 공개 엔드포인트는 토큰 없이 400(검증 실패) 응답 (401 아님)")
         void loginPublicEndpointAccessible() throws Exception {
-            mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/auth/login")
+            mockMvc.perform(post("/api/auth/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("{}"))
                     .andExpect(status().isBadRequest())
