@@ -98,7 +98,7 @@ public class TeamCoordinatorServiceTest {
 
         //then
         assertThat(teams1.size()).isEqualTo(2);
-        assertThat(teams1.get(0).members()).extracting(TeamMemberResponse::name)  // username()
+        assertThat(teams1.get(0).members()).extracting(TeamMemberResponse::name)
                 .contains("사용자이름1", "사용자이름2");
         assertThat(teams1.get(1).members())
                 .extracting(TeamMemberResponse::name)
@@ -144,7 +144,7 @@ public class TeamCoordinatorServiceTest {
     private List<Team> createTeams() {
         Team team1 = Team.createTeam("팀이름1", "이것은 팀이다");
         ReflectionTestUtils.setField(team1, "id", 1L);
-        Team team2 = Team.createTeam("팀이름1", "이것은 팀이다");
+        Team team2 = Team.createTeam("팀이름2", "이것은 팀이다");
         ReflectionTestUtils.setField(team2, "id", 2L);
         return Arrays.asList(team1, team2);
     }
